@@ -1,0 +1,135 @@
+.container-main {
+  margin: 0;
+  padding: 0;
+  background: url(https://i.ibb.co/VQmtgjh/6845078.png) no-repeat;
+  height: 100vh;
+  font-family: sans-serif;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  overflow: hidden
+}
+
+@media screen and (max-width:600px) {
+  .container-main {
+    background-size: cover;
+    position: fixed
+  }
+}
+
+.form-error {
+  font-family: sans-serif;
+  font-size: 14px;
+  margin-bottom: 15px;
+  margin-top: -15px;
+  color: red;
+  font-style: italic
+}
+
+.loginBox .enlace {
+  color: #59238f
+}
+
+.loginBox .enlace:hover {
+  color: #9474b4
+}
+
+.loginBox {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 365px;
+  min-height: 200px;
+  background: #000;
+  border-radius: 10px;
+  padding: 40px;
+  box-sizing: border-box
+}
+
+.user {
+  margin: 0 auto;
+  display: block;
+  margin-bottom: 20px
+}
+
+h3 {
+  margin: 0;
+  padding: 0 0 20px;
+  color: #59238f;
+  text-align: center
+}
+
+.loginBox input {
+  width: 100%;
+  margin-bottom: 20px
+}
+
+.loginBox input[type=password],
+.loginBox input[type=text] {
+  border: none;
+  border-bottom: 2px solid #262626;
+  outline: 0;
+  height: 40px;
+  color: #fff;
+  background: 0 0;
+  font-size: 16px;
+  padding-left: 20px;
+  box-sizing: border-box
+}
+
+.loginBox input[type=password]:hover,
+.loginBox input[type=text]:hover {
+  color: #42f3fa;
+  border: 1px solid #42f3fa;
+  box-shadow: 0 0 5px rgba(0, 255, 0, .3), 0 0 10px rgba(0, 255, 0, .2), 0 0 15px rgba(0, 255, 0, .1), 0 2px 0 #000
+}
+
+.loginBox input[type=password]:focus,
+.loginBox input[type=text]:focus {
+  border-bottom: 2px solid #42f3fa
+}
+
+.inputBox {
+  position: relative
+}
+
+.submit {
+  border: none;
+  outline: 0;
+  height: 40px;
+  width: 100%;
+  font-size: 16px;
+  background: #59238f;
+  color: #fff;
+  border-radius: 20px;
+  cursor: pointer
+}
+
+.submit:hover {
+  background: #50128e
+}
+
+.loginBox a {
+  color: #262626;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  text-align: center;
+  display: block
+}
+
+a:hover {
+  color: #0ff
+}
+
+.loginBox .text-center {
+  margin-top: 15px;
+  color: #6b686b
+}
+
+.form-group {
+  display: flex;
+  justify-content: center;
+  align-items: center
+}
