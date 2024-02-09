@@ -44,15 +44,16 @@ export class UsersServiceService {
     return { success: true, user };
   }
 
-  login(username: string, email: string): Observable<any> {
-    let datos = { username, email, returnSecureToken: true };
+  login(nickname: string, password: string): Observable<any> {
+    let datos = { nickname, password, returnSecureToken: true };
+    console.log(datos)
     return this.http.post<any>(
       'http://localhost:8090/auth/login',
       datos, //Angular maneja el JSON.stringify internamente
       this.httpOptions
     ).pipe(
       tap((response) => {
-        
+        console.log("dsds",response)
         const userInfo = { token: response.token, nickname: response.nickname };
         this.userSubject.next(userInfo);
       }),

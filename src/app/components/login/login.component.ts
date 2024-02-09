@@ -50,7 +50,7 @@ export class LoginComponent {
     } else {
       this.usersService.login(this.email, this.password).subscribe({
         next: (response) => {
-          this.router.navigate(['artworks']);
+          this.router.navigate(['home']);
         },
         error: (error) => {
           this.errorPage = error.message;
