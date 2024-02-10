@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ShowPopUpServiceService } from '../../services/show-pop-up-service.service';
 import { UsersServiceService } from '../../services/users.service.service';
-import { User } from '../../../interfaces/user';
 
 @Component({
   selector: 'app-login',
@@ -28,45 +27,50 @@ export class LoginComponent {
     this.errorPage = '';
     this.mode = value;
     if (value === 'logout') {
-      this.usersService.logout();
-      localStorage.clear(); //guardo el uid del usuario
-      this.router.navigate(['userManagement', 'login']);
+      /* this.usersService.logout(); */
+      sessionStorage.clear(); 
+
+      this.router.navigate(['home']);
     }
   }
 
+  name: string = '';
+  nickname: string = '';
   email: string = '';
   password: string = '';
   errorPage: string = '';
 
-  loginData = {
-    email: this.email,
-    password: this.password,
-  };
+  async register() {
+    if (!this.nickname || !this.password) {
+      this.errorPage = '❗Los campos no pueden estar vacios.';
+      return;
+    } else {      
+      this.usersService
+        .register(this.name, this.nickname, this.email, this.password)
+        .subscribe({
+          next: (response) => {
+            this.showPopUp('register', 'userManagement/login');
+          },
+          error: (error) => {
+            this.errorPage = error.message;
+          },
+        });
+    }
+  }
 
   async login() {
-    if (!this.email || !this.password) {
+    if (!this.nickname || !this.password) {
       this.errorPage = '❗Los campos no pueden estar vacios.';
       return;
     } else {
-      this.usersService.login(this.email, this.password).subscribe({
+      this.usersService.login(this.nickname, this.password).subscribe({
         next: (response) => {
-          this.router.navigate(['home']);
+          this.router.navigate(['artworks']);
         },
         error: (error) => {
           this.errorPage = error.message;
         },
       });
-    }
-  }
-
-  async register() {
-    if (!this.email || !this.password) {
-      this.errorPage = '❗Los campos no pueden estar vacios.';
-      return;
-    } else {
-      let logged = await this.usersService.register(this.email, this.password);
-      if (logged.success) this.showPopUp('register', 'userManagement/login');
-      else this.errorPage = logged.message;
     }
   }
 

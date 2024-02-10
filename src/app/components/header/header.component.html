@@ -8,9 +8,12 @@
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <!-- <div class="border-start"></div> -->
         <a [routerLink]="['/home']" class="logo"><img src="https://i.postimg.cc/9X9w0J7P/pic2649768-modified.png" alt=""
-            style="height: 50px;"></a><div style="width: 20px;"></div>
+            style="height: 50px;"></a>
+        <div style="width: 20px;"></div>
         <a class="nav-link" [routerLink]="['/home']" [routerLinkActive]="['active']">Home</a>
+        <a class="nav-link" [routerLink]="['/profile']" [routerLinkActive]="['active']">Profile</a>
         <li class="nav-item"><a class="nav-link">Team</a></li>
+
       </ul>
     </div>
 
@@ -25,8 +28,14 @@
       <span class="visually-hidden">Button</span>
     </a>
 
+    @if (!isLoggedUser) {
     <a [routerLink]="['/userManagement','login']" class="get-started-btn login">Log In</a>
     <a [routerLink]="['/userManagement','register']" class="get-started-btn">Sign Up</a>
+    }@else{
+    <a [routerLink]="['/userManagement','logout']" class="get-started-btn login">Logout</a>
+    <a [routerLink]="['/profile']" class="get-started-btn">Profile</a>
+
+    }
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
       aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
