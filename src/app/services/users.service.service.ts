@@ -1,24 +1,34 @@
-import { Injectable, OnInit } from '@angular/core';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+} from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { Observable, Subject, catchError, tap, throwError } from 'rxjs';
+import { User } from '../../interfaces/user';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UsersServiceService implements OnInit {
+export class UsersServiceService {
   supaClient: any = null;
 
-  constructor() {}
-  ngOnInit(): void {}
+  constructor(private http: HttpClient) {}
 
-  inicialiTing() {}
+  private httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+    }),
+  };
+
+  userSubject = new Subject<User>();
 
   // En UsersServiceService
   favoritesSubject: Subject<{ id: number; uid: string; artwork_id: string }[]> =
     new Subject();
 
   async register(email: string, password: string): Promise<any> {
-    this.inicialiTing();
     const { user, error } = await this.supaClient.auth.signUp({
       email,
       password,
@@ -34,31 +44,115 @@ export class UsersServiceService implements OnInit {
     return { success: true, user };
   }
 
-  async login(email: string, password: string): Promise<any> {
-    this.inicialiTing();
-    const { data, error } = await this.supaClient.auth.signInWithPassword({
-      email,
-      password,
+  login(nickname: string, password: string): Observable<any> {
+    let datos = { nickname, password, returnSecureToken: true };
+    console.log(datos)
+    return this.http.post<any>(
+      'http://localhost:8090/auth/login',
+      datos, //Angular maneja el JSON.stringify internamente
+      this.httpOptions
+    ).pipe(
+      tap((response) => {
+        console.log("dsds",response)
+        const userInfo = { token: response.token, nickname: response.nickname };
+        this.userSubject.next(userInfo);
+      }),
+      catchError((error: HttpErrorResponse) => {
+        return throwError(() => new Error('Error de conexión o datos inválidos.'));
+      })
+    );
+  }
+  
+
+  /* localstorageLogin(idToken: string, expiresIn: string, localId: string) {
+    const now = new Date();
+    const Token = {
+      token: idToken,
+      expiration: now.getTime() + parseInt(expiresIn) * 1000,
+    };
+    localStorage.setItem('idToken', JSON.stringify(Token));
+    localStorage.setItem('localId', localId);
+    this.logged.next(true);
+  } */
+
+  /* async loginRequest(body: any) {
+    const url = 'http://localhost:8090/auth/login';
+
+    const request = this.http.post<{ uid: string }>(
+      url,
+      JSON.stringify(body),
+      this.httpOptions
+    );
+
+    request.subscribe({
+      next: (response) => {},
+      error: (error) => {
+        if (error.status === 401) {
+          return Promise.reject(response);
+        }
+      },
     });
-    if (error) {
-      if (error.message.includes('Email not confirmed')) {
-        return {
-          success: false,
-          message: 'Verifica tu dirección de correo electronico.',
-        };
-      } else if (error.message.includes('Invalid login credentials')) {
-        return {
-          success: false,
-          message: 'Contraseña o email incorrectos.',
-        };
-      } else return { success: false, message: error.message };
+    return Promise.reject(response);
+  }
+
+  async login(email:string, password:string){
+    const data = await this.loginRequest({ email, password });
+    console.log(data);
+  } */
+
+  /* if (error.status === 401) {
+      const responseData = await response.json();
+      if (responseData && responseData.code === 'PGRST301') {
+         const main = document.querySelector("#container");
+        main.append(popup('expira'));
+        showPopup();
+        route('#/login'); 
+
+        return Promise.reject(responseData); // Rechazar la promesa
+      }
     }
-    const uid = data.session.user.id;
+    if (response.status >= 200 && response.status < 300) {
+      // En cas d'error en el servidor
+      if (response.headers.get('content-type')) {
+        // Si retorna un JSON
+        return await response.json();
+      }
+      return {};
+    }
+    return Promise.reject(await response.json());
+  } */
+
+  /* async login(email: string, password: string) {
+    const url = 'http://localhost:8090/auth/login';
+    const data = await this.baseRequest({ email, password });
+    return data;
+  } */
+
+  /* async loginUser(email: string, password: string) {
+    const { user, error } = await this.login(email, password); */
+
+  /* localStorage.setItem('access_token', dataLogin.access_token);
+      localStorage.setItem('email', dataLogin.user.email);
+      localStorage.setItem('uid', dataLogin.user.id);
+      localStorage.setItem('expirationDate', dataLogin.expires_in); */
+
+  /* if (error.message.includes('Email not confirmed')) {
+      return {
+        success: false,
+        message: 'Verifica tu dirección de correo electronico.',
+      };
+    } else if (error.message.includes('Invalid login credentials')) {
+      return {
+        success: false,
+        message: 'Contraseña o email incorrectos.',
+      };
+    } else return { success: false, message: error.message };
+
+    const uid = user.session.user.id;
     localStorage.setItem('uid', uid);
     //this.getProfile();
-
-    return { success: true, data };
-  }
+    return { success: true, user };
+  } */
 
   async setProfile(formulario: FormGroup) {
     const formData = formulario.value;
@@ -156,7 +250,6 @@ export class UsersServiceService implements OnInit {
   }
 
   async isLogged(): Promise<boolean> {
-    this.inicialiTing();
     const session = await this.supaClient.auth.getSession();
 
     if (session.data.session) {

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ShowPopUpServiceService } from '../../services/show-pop-up-service.service';
 import { UsersServiceService } from '../../services/users.service.service';
+import { User } from '../../../interfaces/user';
 
 @Component({
   selector: 'app-login',
@@ -24,7 +25,7 @@ export class LoginComponent {
 
   @Input()
   set setmode(value: string) {
-    this.error = '';
+    this.errorPage = '';
     this.mode = value;
     if (value === 'logout') {
       this.usersService.logout();
@@ -35,27 +36,37 @@ export class LoginComponent {
 
   email: string = '';
   password: string = '';
-  error: string = '';
+  errorPage: string = '';
+
+  loginData = {
+    email: this.email,
+    password: this.password,
+  };
 
   async login() {
     if (!this.email || !this.password) {
-      this.error = '❗Los campos no pueden estar vacios.';
+      this.errorPage = '❗Los campos no pueden estar vacios.';
       return;
     } else {
-      let logged = await this.usersService.login(this.email, this.password);
-       if (logged.success) this.router.navigate(['artworks']);
-      else this.error = logged.message; 
+      this.usersService.login(this.email, this.password).subscribe({
+        next: (response) => {
+          this.router.navigate(['home']);
+        },
+        error: (error) => {
+          this.errorPage = error.message;
+        },
+      });
     }
   }
 
   async register() {
     if (!this.email || !this.password) {
-      this.error = '❗Los campos no pueden estar vacios.';
+      this.errorPage = '❗Los campos no pueden estar vacios.';
       return;
     } else {
       let logged = await this.usersService.register(this.email, this.password);
       if (logged.success) this.showPopUp('register', 'userManagement/login');
-      else this.error = logged.message;
+      else this.errorPage = logged.message;
     }
   }
 
