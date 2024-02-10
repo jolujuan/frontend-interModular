@@ -65,7 +65,7 @@ export class LoginComponent {
     } else {
       this.usersService.login(this.nickname, this.password).subscribe({
         next: (response) => {
-          this.router.navigate(['game']);
+          this.router.navigate(['artworks']);
         },
         error: (error) => {
           this.errorPage = error.message;
