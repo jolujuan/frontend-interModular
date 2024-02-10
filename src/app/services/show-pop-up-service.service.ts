@@ -23,7 +23,7 @@ export class ShowPopUpServiceService {
           return '<p>Inicia sesión para mostrar favoritos.</p>';
           break;
         case 'register':
-          return '<p>Usuario registrado exitosamente. Por favor revisa tu correo.</p>';
+          return '<p>Usuario registrado exitosamente. Por favor inicia sesión.</p>';
           break;
         case 'profile':
           return '<p>Inicia sesión para mostrar el perfil.</p>';

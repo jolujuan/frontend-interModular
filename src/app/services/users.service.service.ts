@@ -5,8 +5,16 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { Observable, Subject, catchError, tap, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  Subject,
+  catchError,
+  tap,
+  throwError,
+} from 'rxjs';
 import { User } from '../../interfaces/user';
+import { UserProfile } from '../../interfaces/userProfile';
 
 @Injectable({
   providedIn: 'root',
@@ -23,55 +31,140 @@ export class UsersServiceService {
   };
 
   userSubject = new Subject<User>();
+  userProfile = new Subject<UserProfile>();
+
+  logged = new BehaviorSubject<boolean>(false);
 
   // En UsersServiceService
   favoritesSubject: Subject<{ id: number; uid: string; artwork_id: string }[]> =
     new Subject();
 
-  async register(email: string, password: string): Promise<any> {
-    const { user, error } = await this.supaClient.auth.signUp({
-      email,
-      password,
-    }); //let data = session.data;
-    if (error) {
-      if (error.message.includes('Password should be at least 6 characters.')) {
-        return {
-          success: false,
-          message: 'Contraseña mínimo 6 caracteres.',
-        };
-      } else return { success: false, message: error.message };
-    }
-    return { success: true, user };
+  register(
+    nombre: string,
+    nickname: string,
+    email: string,
+    password: string
+  ): Observable<any> {
+    let datos = { nombre, nickname, email, password, returnSecureToken: true };
+    return this.http
+      .post<any>(
+        'http://localhost:8090/auth/nuevo',
+        datos, //Angular maneja el JSON.stringify internamente
+        this.httpOptions
+      )
+      .pipe(
+        tap((response) => {
+          this.localStorage(
+            response.nickname,
+            response.token
+          );
+          const userInfo = {
+            token: response.token,
+            nickname: response.nickname,
+          };
+          this.userSubject.next(userInfo);
+        }),
+        catchError((error: HttpErrorResponse) => {
+          return throwError(
+            () => new Error('Error de conexión o datos inválidos.')
+          );
+        })
+      );
   }
 
-  login(username: string, email: string): Observable<any> {
-    let datos = { username, email, returnSecureToken: true };
-    return this.http.post<any>(
-      'http://localhost:8090/auth/login',
-      datos, //Angular maneja el JSON.stringify internamente
-      this.httpOptions
-    ).pipe(
-      tap((response) => {
-        
-        const userInfo = { token: response.token, nickname: response.nickname };
-        this.userSubject.next(userInfo);
-      }),
-      catchError((error: HttpErrorResponse) => {
-        return throwError(() => new Error('Error de conexión o datos inválidos.'));
-      })
-    );
+  login(nickname: string, password: string): Observable<any> {
+    let datos = { nickname, password, returnSecureToken: true };
+    return this.http
+      .post<any>(
+        'http://localhost:8090/auth/login',
+        datos, //Angular maneja el JSON.stringify internamente
+        this.httpOptions
+      )
+      .pipe(
+        tap((response) => {
+          this.localStorage(
+            response.token,
+            response.nickname
+          );
+          const userInfo = {
+            token: response.token,
+            nickname: response.nickname,
+          };
+          this.userSubject.next(userInfo);
+        }),
+        catchError((error: HttpErrorResponse) => {
+          return throwError(
+            () => new Error('Error de conexión o datos inválidos.')
+          );
+        })
+      );
   }
-  
 
-  /* localstorageLogin(idToken: string, expiresIn: string, localId: string) {
+  localStorage(idToken: string ,nickname: string) {
     const now = new Date();
+    //Tiempo de expiración 3 horas
+    const expiration = now.getTime() + parseInt('10.800') * 1000; 
+
     const Token = {
       token: idToken,
-      expiration: now.getTime() + parseInt(expiresIn) * 1000,
+      expiration: expiration,
     };
-    localStorage.setItem('idToken', JSON.stringify(Token));
-    localStorage.setItem('localId', localId);
-    this.logged.next(true);
+    sessionStorage.setItem('idToken', JSON.stringify(Token));
+    sessionStorage.setItem('nickname', nickname);
+    // this.logged.next(true);
+  }
+
+  isLogged(): boolean {
+    try {
+      const idToken = sessionStorage.getItem('idToken');
+      console.log(idToken);
+      if (!idToken) return false;
+
+      const idTokenString = JSON.parse(idToken);
+      const now = new Date().getTime();
+
+      if (idTokenString.expiration > now) { //Comprueba si el token ha expirada
+        return true;
+      } else {
+        sessionStorage.removeItem('idToken');
+        return false;
+      }
+
+    } catch (e) {
+      return false;
+    }
+    return true;
+  }
+
+
+ /*  logout() {
+
+     sessionStorage.clear(); 
+  } */
+
+
+
+  /* isLogged() {
+    this.logged.subscribe((logged) => {
+        console.log(logged);
+
+        const idToken = sessionStorage.getItem('idToken');
+        const now = new Date();
+        if (idToken) {
+          const token: { token: string; expiration: number } =
+            JSON.parse(idToken);
+          if (token.expiration > now.getTime()) {
+            return true;
+          } else {
+            sessionStorage.removeItem('idToken');
+            return false;
+          }
+        } else {
+          return false;
+        }
+      
+    });
+    return true;
   } */
 
   /* async loginRequest(body: any) {
@@ -94,7 +187,7 @@ export class UsersServiceService {
     return Promise.reject(response);
   }
 
-  async login(email:string, password:string){
+  async localStorage(email:string, password:string){
     const data = await this.loginRequest({ email, password });
     console.log(data);
   } */
@@ -121,19 +214,19 @@ export class UsersServiceService {
     return Promise.reject(await response.json());
   } */
 
-  /* async login(email: string, password: string) {
+  /* async localStorage(email: string, password: string) {
     const url = 'http://localhost:8090/auth/login';
     const data = await this.baseRequest({ email, password });
     return data;
   } */
 
   /* async loginUser(email: string, password: string) {
-    const { user, error } = await this.login(email, password); */
+    const { user, error } = await this.localStorage(email, password); */
 
-  /* localStorage.setItem('access_token', dataLogin.access_token);
-      localStorage.setItem('email', dataLogin.user.email);
-      localStorage.setItem('uid', dataLogin.user.id);
-      localStorage.setItem('expirationDate', dataLogin.expires_in); */
+  /* sessionStorage.setItem('access_token', dataLogin.access_token);
+      sessionStorage.setItem('email', dataLogin.user.email);
+      sessionStorage.setItem('uid', dataLogin.user.id);
+      sessionStorage.setItem('expirationDate', dataLogin.expires_in); */
 
   /* if (error.message.includes('Email not confirmed')) {
       return {
@@ -148,7 +241,7 @@ export class UsersServiceService {
     } else return { success: false, message: error.message };
 
     const uid = user.session.user.id;
-    localStorage.setItem('uid', uid);
+    sessionStorage.setItem('uid', uid);
     //this.getProfile();
     return { success: true, user };
   } */
@@ -198,7 +291,7 @@ export class UsersServiceService {
   }
 
   /* getProfile(): void {
-    const uid = localStorage.getItem('uid');
+    const uid = sessionStorage.getItem('uid');
 
     let profilePromise: Promise<{ data: IUser[] }> = this.supaClient
       .from('profiles')
@@ -232,7 +325,7 @@ export class UsersServiceService {
   }
 
   getFavorites(): void {
-    let uid = localStorage.getItem('uid');
+    let uid = sessionStorage.getItem('uid');
     if (uid) {
       let promiseFavorites: Promise<{
         data: { id: number; uid: string; artwork_id: string }[];
@@ -246,20 +339,5 @@ export class UsersServiceService {
         this.favoritesSubject.next(data.data);
       });
     }
-  }
-
-  async isLogged(): Promise<boolean> {
-    const session = await this.supaClient.auth.getSession();
-
-    if (session.data.session) {
-      //this.getProfile();
-      return true;
-    }
-    return false;
-  }
-
-  async logout() {
-    const { error } = await this.supaClient.auth.signOut();
-    //this.userSubject.next(emptyUser);
   }
 }

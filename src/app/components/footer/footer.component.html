@@ -5,11 +5,10 @@
         <div class="footer-top">
             <div class="col-md-12 text-center">
                 <p class="menu">
-                    <a href="#">Home</a>
+                    <a [routerLink]="['/home']">Home</a>
                     <a [routerLink]="['/profile']">Profile</a>
-                    <a [routerLink]="['/userManagement','login']">Login</a>
-                    <a [routerLink]="['/userManagement/logout']">Logout</a>
-
+                    <a>Team</a>
+                
                 </p>
                 <ul class="ftco-footer-social p-0">
                     <ul class="ftco-footer-social p-0">
@@ -32,30 +31,26 @@
                                 </span>
                             </a>
                         </li>
-
                     </ul>
                 </ul>
             </div>
         </div>
 
         <div class="footer-med">
-            <!-- aqui deberas poner un texto de prueba -->
             <p>ficar una descripcio del proyecyeficar una descripcio del proyecyeficar una descripcio del proyecyeficar
                 una descripcio del proyecyeficar una descripcio del proyecyeficar una descripcio del proyecyeficar una
                 descripcio del proyecye</p>
         </div>
-
-
     </div>
 
     <div class="footer-bot">
         <div class="row mt-5">
             <div class="col-md-12 text-center">
                 <p class="copyright">
-                    Copyright &copy; {{ currentYear }} <br> Jose Luis, Ismael, Miquel </p>
-                <p>Todos los derechos reservados </p>
+                    &lt;Jose Luis. Ismael. Miquel/&gt; <br>
+                    Copyright &copy; {{ currentYear }}. Todos los derechos reservados
+                </p>
             </div>
         </div>
     </div>
-
 </footer>

@@ -1,7 +1,32 @@
 <app-header></app-header>
 
-<div class="container-main" style="height: 30em;">
-<h3 style="color: wheat;">home funciona</h3>
+<div class="container-main">
+
+    <div class="container-bot">
+        <div class="cont new">
+            <h3>Iniciar nueva partida</h3>
+            <div class="texto">
+                <p>Estás preparado para iniciar el mejor juego de preguntas y respuestas... ¿Preparados?</p>
+            </div>
+            <button class="toggle-btn" (click)="navigateToLogin()" data-toggle="collapse">Play</button>
+
+
+        </div>
+
+        <div class="cont play">
+            <h3>Conectarse a una partida</h3>
+            <div class="texto">
+                <p>¿Tienes un id de partida? Proporcionalo más abajo para comenzar a jugar con amigos</p>
+            </div>
+            <input type="text" class="input" [(ngModel)]="idGame" (keyup.enter)="loadGame('idGame')"
+                (input)="showError=false" [ngClass]="{'input-error': showError}"
+                [placeholder]="showError ? 'ID not found' : 'ID game'">
+
+            <button (click)="loadGame('idGame')" class="toggle-btn" href="#toggle-form"
+                data-toggle="collapse">Connect</button>
+
+        </div>
+    </div>
 </div>
 
 <app-footer></app-footer>
