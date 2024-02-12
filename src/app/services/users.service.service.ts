@@ -66,7 +66,7 @@ export class UsersServiceService {
         }),
         catchError((error: HttpErrorResponse) => {          
           return throwError(
-            () => new Error('Error de conexión o datos inválidos.',)
+            () => new Error('Email o nickname existentes.',)
           );
         })
       );
@@ -80,6 +80,7 @@ export class UsersServiceService {
       this.httpOptions
     ).pipe(
       tap((response) => {
+        
         this.localStorage(
           response.token,
           response.nickname
@@ -88,7 +89,7 @@ export class UsersServiceService {
         this.userSubject.next(userInfo);
       }),
       catchError((error: HttpErrorResponse) => {
-        return throwError(() => new Error('Error de conexión o datos inválidos.'));
+        return throwError(() => new Error('Email o nickname existentes.'));
       })
     );
   }

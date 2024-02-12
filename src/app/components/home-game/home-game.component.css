@@ -1,0 +1,33 @@
+.container-main {
+    background: linear-gradient(135deg, #172a74, #21a9af);
+    background-color: #184e8e;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.container-partida {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+
+}
+
+.cont {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+
+    width: 70%;
+    background-color: white;
+    margin: 20px;
+    position: relative;
+    padding: 20px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

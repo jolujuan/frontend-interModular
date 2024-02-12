@@ -28,7 +28,16 @@ h6 {
   }
 }
 
+
+
+.div-logo{
+  min-width: 10%;
+  padding: 10px;
+}
+
+
 #navbar .logo {
+
   font-size: 30px;
   margin: 0;
   padding: 0;
@@ -36,9 +45,9 @@ h6 {
   font-family: Poppins, sans-serif
 }
 
-#navbar .logo a {
+/* #navbar .logo a {
   color: #fff
-}
+} */
 
 #navbar .logo a span {
   color: #e03a3c

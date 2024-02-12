@@ -12,7 +12,7 @@ export const routes: Routes = [
   { path: 'userManagement/:setmode', component: LoginComponent },
   { path: 'userManagement/logout', component: LoginComponent },
   { path: 'profile', component: ProfileComponent },
-  { path: 'game', component: HomeGameComponent , canActivate:[AuthGuardGame] },//NO podras acceder a game sin loguear
+  { path: 'game', component: HomeGameComponent  },//NO podras acceder a game sin loguear
   { path: '', component: HomeComponent},
   { path: '**', component: NotFound404Component }, //Pagina cuando no se han encontrado los datos
 ];

@@ -10,5 +10,12 @@ import { FooterComponent } from '../footer/footer.component';
   styleUrl: './home-game.component.css'
 })
 export class HomeGameComponent {
-
+   copiarAlPortapapeles(idElemento:string) {
+    let texto = document.getElementById(idElemento)!.innerText;
+    navigator.clipboard.writeText(texto).then(function() {
+        console.log('Texto copiado al portapapeles');
+    }, function(err) {
+        console.error('Error al copiar el texto: ', err);
+    });
+}
 }

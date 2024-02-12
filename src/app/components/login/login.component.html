@@ -1,6 +1,6 @@
 <div #divPopUp></div>
 <div class="container-main">
-    
+
     <div class="loginBox">
         <img class="user" src="https://i.ibb.co/yVGxFPR/2.png" height="100px" width="100px">
 
@@ -10,19 +10,21 @@
         <h3>Sign in here</h3>
 
 
-        <form class="signin-form">
+        <form class="signin-form" [formGroup]="formLogin" (ngSubmit)="onSubmitLogin()">
             <div class="inputBox">
-                <input type="text" [(ngModel)]="nickname" name="nickname" placeholder="Nickname" required>
-                <div *ngIf="errorPage" class="form-error">{{ errorPage }}</div>
-
+                <input type="text" formControlName="nickname" placeholder="Nickname" required>
+                @if (campoNickLogin) {
+                <div class="form-error">{{ errorNicknameLogin }}</div>
+                }
             </div>
             <div class="inputBox">
-                <input type="password" [(ngModel)]="password" name="password" placeholder="Password" required>
-                <div *ngIf="errorPage" class="form-error">{{ errorPage }}</div>
-
+                <input type="password" formControlName="password" placeholder="Password" required>
+                @if (campoPassLogin) {
+                <div class="form-error">{{ errorPasswordLogin }}</div>
+                }
             </div>
             <div class="form-group">
-                <button id="login" (click)="login()" type="submit" class="submit">
+                <button type="submit" [disabled]="!formLogin.valid" class="submit">
                     Login
                 </button>
             </div>
@@ -35,29 +37,50 @@
         @if(mode==='register'){
         <h3>Sign up here</h3>
 
-        <form class="signin-form">
+        <form class="signin-form" [formGroup]="formRegister" (ngSubmit)="onSubmitRegister()">
             <div class="inputBox">
-                <input type="text" [(ngModel)]="name" name="name" placeholder="First name" required>
+                <input type="text" formControlName="name" placeholder="First name">
+                @if (campoName) {
+                <div class="form-error">{{ errorName }}</div>
+                }
             </div>
             <div class="inputBox">
-                <input type="text" [(ngModel)]="email" name="email" placeholder="Email address" required>
+                <input type="text" formControlName="email" placeholder="Email address">
+                @if (campoEmail) {
+                <div class="form-error">{{ errorEmail }}</div>
+                }
             </div>
             <div class="inputBox">
-                <input type="text" [(ngModel)]="nickname" name="nickname" placeholder="Nickname" required>
-                <div *ngIf="errorPage" class="form-error">{{ errorPage }}</div>
+                <input formControlName="nickname" type="text" placeholder="Nickname">
+                @if (campoNick) {
+                <div class="form-error">{{ errorNickname }}</div>
+                }
             </div>
             <div class="inputBox">
-                <input type="password" [(ngModel)]="password" name="password" placeholder="Password" required>
-                <div *ngIf="errorPage" class="form-error">{{ errorPage }}</div>
+                <input formControlName="password" type="password" placeholder="Password">
+                @if (campoPass) {
+                <div class="form-error">{{ errorPassword }}</div>
+                }
+            </div>
+            <div class="inputBox">
+                <input formControlName="password2" type="password" placeholder="Repeat password" required>
+                @if (campoPass) {
+                <div class="form-error">{{ errorPassword }}</div>
+                }
+            </div>
+            <div class="inputBox">
+
+                @if (errorLogin) {
+                <div class="form-error" style="text-align: center;font-size: 16px;">{{ errorLogin }}</div>
+                }
             </div>
             <div class="form-group">
 
-                <button (click)="register()" type="submit" class="submit">
+                <button type="submit" [disabled]="!formRegister.valid" class="submit">
                     Register
                 </button>
-
-
             </div>
+
         </form>
         <a class="text-center">Have an account?
             <a data-toggle="tab" [routerLink]="['/userManagement','login']" class="enlace">Login</a></a>
