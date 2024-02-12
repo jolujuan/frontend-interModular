@@ -55,8 +55,8 @@ export class UsersServiceService {
       .pipe(
         tap((response) => {
           this.localStorage(
-            response.nickname,
-            response.token
+            response.token,
+            response.nickname
           );
           const userInfo = {
             token: response.token,
@@ -64,23 +64,26 @@ export class UsersServiceService {
           };
           this.userSubject.next(userInfo);
         }),
-        catchError((error: HttpErrorResponse) => {
+        catchError((error: HttpErrorResponse) => {          
           return throwError(
-            () => new Error('Error de conexión o datos inválidos.')
+            () => new Error('Error de conexión o datos inválidos.',)
           );
         })
       );
   }
 
-  login(username: string, email: string): Observable<any> {
-    let datos = { username, email, returnSecureToken: true };
+  login(nickname: string, password: string): Observable<any> {
+    let datos = { nickname, password, returnSecureToken: true };
     return this.http.post<any>(
       'http://localhost:8090/auth/login',
       datos, //Angular maneja el JSON.stringify internamente
       this.httpOptions
     ).pipe(
       tap((response) => {
-        
+        this.localStorage(
+          response.token,
+          response.nickname
+        );
         const userInfo = { token: response.token, nickname: response.nickname };
         this.userSubject.next(userInfo);
       }),
