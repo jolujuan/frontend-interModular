@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -10,7 +10,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ShowPopUpServiceService } from '../../services/show-pop-up-service.service';
 import { UsersServiceService } from '../../services/users.service.service';
 
@@ -21,11 +21,12 @@ import { UsersServiceService } from '../../services/users.service.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   @ViewChild('divPopUp') divPopUp: ElementRef | undefined;
 
   constructor(
     private router: Router,
+    private routeAct: ActivatedRoute,
     private usersService: UsersServiceService,
     private popupService: ShowPopUpServiceService,
     private formBuilder: FormBuilder
@@ -34,16 +35,25 @@ export class LoginComponent {
     this.crearFormularioRegister();
   }
   mode: string = 'login';
+  game: string = '';
 
-  @Input()
-  set setmode(value: string) {
-    this.mode = value;
-    if (value === 'logout') {
-      /* this.usersService.logout(); */
-      sessionStorage.clear();
+  ngOnInit(): void {
+    this.routeAct.params.subscribe((params) => {
+      const setMode = params['setmode'];
+      const setGame = params['setgame'];
 
-      this.router.navigate(['home']);
-    }
+      if (setMode) {        
+        this.mode = setMode;
+        if (setMode === 'logout') {
+          sessionStorage.clear();
+          this.router.navigate(['home']);
+        }
+      }
+      //Para conectarse a una partida con idGame es necesario loguearse primero
+      if (setGame) {
+        this.game = setGame;
+      }
+    });
   }
 
   formRegister!: FormGroup;
@@ -52,6 +62,7 @@ export class LoginComponent {
   errorNicknameLogin: string = '';
   errorPasswordLogin: string = '';
   errorLogin: string = '';
+  errorRegister: string = '';
 
   errorName: string = '';
   errorEmail: string = '';
@@ -213,7 +224,7 @@ export class LoginComponent {
 
     this.usersService.register(name, nickname, email, password).subscribe({
       next: (response) => {
-        this.showPopUp('register', 'userManagement/login');
+        this.showPopUp('register', 'userManagement/mode/login');
       },
       error: (error) => {
         this.errorLogin = error.message;
@@ -227,10 +238,13 @@ export class LoginComponent {
 
     this.usersService.login(nickname, password).subscribe({
       next: (response) => {
-        this.router.navigate(['game']);
+        //Pasar el id de la partida si se ha enviado
+        this.game
+          ? this.router.navigate(['/game', `${this.game}`])
+          : this.router.navigate(['/game']);
       },
       error: (error) => {
-        this.errorNickname = error.message;
+        this.errorLogin = error.message;
       },
     });
   }

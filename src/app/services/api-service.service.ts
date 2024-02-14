@@ -1,62 +1,47 @@
-import { HttpClient } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+  HttpResponse,
+} from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subject, from, map, mergeMap, toArray } from 'rxjs';
-import { IArtwork } from '../interfaces/i-artwork';
-
-const url = `https://api.artic.edu/api/v1/artworks`;
+import { Observable, catchError, tap, throwError } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ApiServiceService {
+  constructor(private http: HttpClient) {}
 
-  artworksSubject: Subject<IArtwork[]> = new Subject();
-  constructor(private http: HttpClient) { }
+  private httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+    }),
+  };
 
-  /* Realizar la peticion, transformar los datos a data, se suscribe al observable y devuelve el subject*/
-  public getArtWorks(): Observable<IArtwork[]> {
-    this.http.get<{ data: IArtwork[] }>(url).pipe(
-      map(response => response.data)
-    ).subscribe((artworks) => {
-      this.artworksSubject.next(artworks);
-    }
-    );
-    return this.artworksSubject;
+  getBoard(nickname: string, token: string): Observable<any> {
+    let datos = { returnSecureToken: true };
+    return this.http
+      .post<any>(
+        `http://localhost:8090/api/v1/createBoard/${nickname}`,
+        datos,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .pipe(
+        tap((response) => {
+          const userInfo = {
+            idTablero: response.idTablero,
+            player1: response.jugador1,
+            player2: response.jugador2,
+          };
+        }),
+        catchError((error: HttpErrorResponse) => {
+          return throwError(() => new Error('Datos incorrectos'));
+        })
+      );
   }
-  /* Obtener las siguientes o anteriores paginas */
-  public getArtWorksPage(url: string): Observable<IArtwork[]> {
-    this.http.get<{ data: IArtwork[] }>(url).pipe(
-      map(response => response.data)
-    ).subscribe((artworks) => {
-      this.artworksSubject.next(artworks);
-    }
-    );
-    return this.artworksSubject;
-  }
-  /* Obtener la propiedad para mostrar listado de paginas */
-  public getArtWorksAll(url:string): Observable<number> {
-    return this.http.get<{ pagination: { total_pages: number } }>(url).pipe(
-      map(response => response.pagination.total_pages)
-    );
-  }
-
-  public getArtworksFromIDs(artworkList: string[]): Observable<IArtwork[]> {
-    from(artworkList).pipe(
-      mergeMap(artwork_id => {
-        return this.http.get<{ data: IArtwork[] }>(`${url}/${artwork_id}`).pipe(
-          map(response => response.data)
-        )
-      }),
-      toArray()
-    ).subscribe(artworks => this.artworksSubject.next(artworks.flat()))
-
-    return this.artworksSubject;
-  }
-
-  public filterArtWorks(filter: string): Observable<IArtwork[]> {
-    return this.http.get<{ data: IArtwork[] }>(`${url}/search?q=${filter}&fields=id,description,title,image_id`).pipe(
-      map(response => response.data)
-    );
-  }
-
 }

@@ -32,10 +32,10 @@
     </a>
 
     @if (!isLoggedUser) {
-    <a [routerLink]="['/userManagement','login']" class="get-started-btn login">Log In</a>
-    <a [routerLink]="['/userManagement','register']" class="get-started-btn">Sign Up</a>
+    <a [routerLink]="['/userManagement/mode','login']" class="get-started-btn login">Log In</a>
+    <a [routerLink]="['/userManagement/mode','register']" class="get-started-btn">Sign Up</a>
     }@else{
-    <a [routerLink]="['/userManagement','logout']" class="get-started-btn login">Logout</a>
+    <a [routerLink]="['/userManagement/mode','logout']" class="get-started-btn login">Logout</a>
     <a [routerLink]="['/profile']" class="get-started-btn">Profile</a>
 
     }

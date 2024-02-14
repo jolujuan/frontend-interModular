@@ -1,19 +1,74 @@
 <app-header></app-header>
 
 <div class="container-main">
-    <div class="container-partida">
-        <div class="cont">
-            <h3>ID GAME</h3>
-            <p><span id="copyText"><b>454</b></span></p>
-            <span id="numeroEjemplo">123456</span>
-            <button class="btn" onclick="copiarAlPortapapeles('numeroEjemplo')">
-                <i class="bi bi-copy"></i>
-            </button>
-            <a href="https://wa.me/?text=URL_A_COMPARTIR" class="btn">
-                <i class="fab fa-whatsapp"></i>
-            </a>
-        </div>
+  <div class="container-partida">
+    <div class="cont">
+      <h3>ID GAME</h3>
+      <button class="btn" (click)="copiarAlPortapapeles('idGame')">
+        <b
+          ><span id="idGame" class="btn-id">{{ idGame }} </span></b
+        > <i class="bi bi-copy"></i><!--<a href="https://wa.me/?text=URL_A_COMPARTIR" class="btn-share">
+          Share<i class="bi bi-send" style="margin-left: 5px"></i>
+        </a> -->
+      </button>
+      <div *ngIf="mostrarNotificacion" class="notificacion">Copiado al portapapeles!</div>
     </div>
+
+    <div class="cont">
+      <h3 style="margin-bottom: 25px">
+        Esperando jugadores @if (!playGlobal) { <span class="loader"></span>
+        }
+      </h3>
+
+      <table class="table table-bordered">
+        <tbody>
+          <tr>
+            <td>{{ player1 }}</td>
+            @if (!playPlayer1) {
+            <td>{{ state }}<span class="loader"></span></td>
+            }@else{
+            <td>{{ stateReady }}<i class="bi bi-check loaderReady"></i></td>
+            }
+          </tr>
+          <tr>
+            <td>{{ player2 }}</td>
+            @if (!playPlayer2) {
+            <td>{{ state }}<span class="loader"></span></td>
+            }@else{
+            <td>{{ stateReady }}<i class="bi bi-check loaderReady"></i></td>
+            }
+          </tr>
+          <tr>
+            <td>{{ player3 }}</td>
+            @if (!playPlayer3) {
+            <td>{{ state }}<span class="loader"></span></td>
+            }@else{
+            <td>{{ stateReady }}<i class="bi bi-check loaderReady"></i></td>
+            }
+          </tr>
+          <tr>
+            <td>{{ player4 }}</td>
+            @if (!playPlayer4) {
+            <td>{{ state }}<span class="loader"></span></td>
+            }@else{
+            <td>{{ stateReady }}<i class="bi bi-check loaderReady"></i></td>
+            }
+          </tr>
+        </tbody>
+      </table>
+
+      @if (playGlobal) {
+      <button
+        (click)="loadGame()"
+        class="toggle-btn"
+        href="#toggle-form"
+        data-toggle="collapse"
+      >
+        START
+      </button>
+      }
+    </div>
+  </div>
 </div>
 
 <app-footer></app-footer>

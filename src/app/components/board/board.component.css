@@ -1,0 +1,39 @@
+.container-main {
+  background: linear-gradient(135deg, #172a74, #21a9af);
+  height: 60em;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-auto-rows: 80px;
+  gap: 5px;
+  width: 100%;
+}
+.cell {
+  border: 1px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #c19a6b;
+}
+.cell:nth-of-type(8),
+.cell:nth-of-type(9),
+.cell:nth-of-type(10),
+.cell:nth-of-type(11),
+.cell:nth-of-type(14),
+.cell:nth-of-type(15),
+.cell:nth-of-type(16),
+.cell:nth-of-type(17),
+.cell:nth-of-type(20),
+.cell:nth-of-type(21),
+.cell:nth-of-type(22),
+.cell:nth-of-type(23),
+.cell:nth-of-type(26) {
+  border: none;
+  background: none;
+}

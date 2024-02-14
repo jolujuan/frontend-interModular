@@ -23,6 +23,13 @@
                 <div class="form-error">{{ errorPasswordLogin }}</div>
                 }
             </div>
+            
+            <div class="inputBox">
+                @if (errorLogin) {
+                <div class="form-error" style="text-align: center;font-size: 16px;">{{ errorLogin }}</div>
+                }
+            </div>
+
             <div class="form-group">
                 <button type="submit" [disabled]="!formLogin.valid" class="submit">
                     Login
@@ -31,7 +38,7 @@
         </form>
 
         <a class="text-center">Don't have an account?
-            <a data-toggle="tab" [routerLink]="['/userManagement','register']" class="enlace">Register</a></a>
+            <a data-toggle="tab" [routerLink]="['/userManagement/mode','register']" class="enlace">Register</a></a>
         }
 
         @if(mode==='register'){
@@ -68,14 +75,14 @@
                 <div class="form-error">{{ errorPassword }}</div>
                 }
             </div>
-            <div class="inputBox">
 
+            <div class="inputBox">
                 @if (errorLogin) {
                 <div class="form-error" style="text-align: center;font-size: 16px;">{{ errorLogin }}</div>
                 }
             </div>
-            <div class="form-group">
 
+            <div class="form-group">
                 <button type="submit" [disabled]="!formRegister.valid" class="submit">
                     Register
                 </button>
@@ -83,7 +90,7 @@
 
         </form>
         <a class="text-center">Have an account?
-            <a data-toggle="tab" [routerLink]="['/userManagement','login']" class="enlace">Login</a></a>
+            <a data-toggle="tab" [routerLink]="['/userManagement/mode','login']" class="enlace">Login</a></a>
         }
     </div>
 </div>
