@@ -3,6 +3,7 @@ import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { ApiServiceService } from '../../services/api-service.service';
 
 @Component({
   selector: 'app-home-game',
@@ -12,19 +13,30 @@ import { Router } from '@angular/router';
   styleUrl: './home-game.component.css',
 })
 export class HomeGameComponent implements OnInit {
-  idGame: number = 43;
-
-  constructor(private router: Router){
-
-  }
-
-  ngOnInit(): void {
-    this.loadPlayers();
-  }
-
+  idGame!: number;
   @Input()
   set setmode(value: number) {
     this.idGame = value;
+  }
+
+  constructor(private router: Router, private apiService: ApiServiceService) {}
+
+  ngOnInit(): void {
+    if (this.idGame != null || this.idGame != undefined) {
+      const nickname = sessionStorage.getItem('nickname');
+      const storedToken = sessionStorage.getItem('idToken');
+
+      if (nickname != null && storedToken != null) {
+        const token = JSON.parse(storedToken); //Realizar la conversion a objeto
+
+        this.apiService.createBoard(nickname, token.token).subscribe({
+          next: (response)=>{
+            console.log("resuesta recivida al front")
+          }
+        });
+      }
+    }
+    this.loadPlayers();
   }
 
   playGlobal: boolean = true;
@@ -35,7 +47,7 @@ export class HomeGameComponent implements OnInit {
 
   state: string = 'Esperando';
   stateReady: string = 'Listo';
-  
+
   player1: string = 'Jugador 1';
   player2: string = 'Jugador 2';
   player3: string = 'Jugador 3';
@@ -44,10 +56,9 @@ export class HomeGameComponent implements OnInit {
   mostrarNotificacion: boolean = false;
   copiarAlPortapapeles(idGame: string) {
     let texto = document.getElementById(idGame)!.innerText;
-    navigator.clipboard.writeText(texto).then(()=>{
+    navigator.clipboard.writeText(texto).then(() => {
       this.mostrarNotificacion = true;
-      setTimeout(() => this.mostrarNotificacion = false, 2000); // Oculta la notificación después de 2 segundos
-       
+      setTimeout(() => (this.mostrarNotificacion = false), 2000); // Oculta la notificación después de 2 segundos
     });
   }
 

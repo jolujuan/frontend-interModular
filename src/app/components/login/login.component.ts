@@ -38,21 +38,20 @@ export class LoginComponent implements OnInit {
   game: string = '';
 
   ngOnInit(): void {
-    this.routeAct.params.subscribe((params) => {
-      const setMode = params['setmode'];
-      const setGame = params['setgame'];
+    this.routeAct.queryParams.subscribe((queryParams) => {
+      const setMode = queryParams['setmode'];
+      const setGame = queryParams['setgame'];
 
-      if (setMode) {        
+      if (setMode) {
         this.mode = setMode;
         if (setMode === 'logout') {
           sessionStorage.clear();
           this.router.navigate(['home']);
         }
       }
+
       //Para conectarse a una partida con idGame es necesario loguearse primero
-      if (setGame) {
-        this.game = setGame;
-      }
+      if (setGame) this.game = setGame;
     });
   }
 

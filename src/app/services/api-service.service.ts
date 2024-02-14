@@ -5,7 +5,7 @@ import {
   HttpResponse,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, tap, throwError } from 'rxjs';
+import { Observable, Subject, catchError, tap, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -19,8 +19,11 @@ export class ApiServiceService {
     }),
   };
 
-  getBoard(nickname: string, token: string): Observable<any> {
+  boardSubject = new Subject<string>();
+
+  createBoard(nickname: string, token: string): Observable<any> {
     let datos = { returnSecureToken: true };
+
     return this.http
       .post<any>(
         `http://localhost:8090/api/v1/createBoard/${nickname}`,
@@ -33,13 +36,14 @@ export class ApiServiceService {
       )
       .pipe(
         tap((response) => {
-          const userInfo = {
-            idTablero: response.idTablero,
-            player1: response.jugador1,
-            player2: response.jugador2,
-          };
+          console.log('response ', response);
+
+          const boardInfo = response.idTablero;
+          this.boardSubject.next(boardInfo);
         }),
         catchError((error: HttpErrorResponse) => {
+          console.log(error);
+
           return throwError(() => new Error('Datos incorrectos'));
         })
       );

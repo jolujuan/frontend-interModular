@@ -35,12 +35,12 @@ export class HomeComponent {
       return;
     } else if (!this.usersService.isLogged()) {
       //Enviar a loguear si no ha iniciado sesion con el id de la partida
-      this.router.navigate(['/userManagement/game', `${idGame}`]);
+      this.router.navigate(['/userManagement/mode'], { queryParams: { setmode: 'login', setgame: idGame } });
     }
     this.showError = false;
   }
 
   navigateToLogin(idGame: string) {
-    this.router.navigate(['/userManagement/game', `${idGame}`]);
+    this.router.navigate(['/userManagement/mode'], { queryParams: { setmode: 'login', setgame: idGame } });
   }
 }

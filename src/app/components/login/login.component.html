@@ -38,7 +38,12 @@
         </form>
 
         <a class="text-center">Don't have an account?
-            <a data-toggle="tab" [routerLink]="['/userManagement/mode','register']" class="enlace">Register</a></a>
+            @if(game){
+                <a [routerLink]="['/userManagement/mode']" [queryParams]="{ setmode: 'register', setgame: game }" class="enlace">Register</a>
+            }@else{
+                <a [routerLink]="['/userManagement/mode']" [queryParams]="{ setmode: 'register'}" class="enlace">Register</a>
+            }
+        </a>
         }
 
         @if(mode==='register'){
@@ -90,7 +95,12 @@
 
         </form>
         <a class="text-center">Have an account?
-            <a data-toggle="tab" [routerLink]="['/userManagement/mode','login']" class="enlace">Login</a></a>
+            @if(game){
+                <a [routerLink]="['/userManagement/mode']" [queryParams]="{ setmode: 'login', setgame: game }" class="enlace">Login</a>
+            }@else{
+                <a [routerLink]="['/userManagement/mode']" [queryParams]="{ setmode: 'login'}" class="enlace">Login</a>
+            }
+        </a>
         }
     </div>
 </div>
