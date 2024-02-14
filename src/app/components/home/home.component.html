@@ -8,7 +8,7 @@
             <div class="texto">
                 <p>Estás preparado para iniciar el mejor juego de preguntas y respuestas... ¿Preparados?</p>
             </div>
-            <button class="toggle-btn" (click)="navigateToLogin()" data-toggle="collapse">Play</button>
+            <button class="toggle-btn" (click)="navigateToLogin(idGame)" data-toggle="collapse">Play</button>
 
 
         </div>
@@ -18,11 +18,11 @@
             <div class="texto">
                 <p>¿Tienes un id de partida? Proporcionalo más abajo para comenzar a jugar con amigos</p>
             </div>
-            <input type="text" class="input" [(ngModel)]="idGame" (keyup.enter)="loadGame('idGame')"
+            <input type="number" class="input" [(ngModel)]="idGame" (keyup.enter)="loadGame('idGame')"
                 (input)="showError=false" [ngClass]="{'input-error': showError}"
                 [placeholder]="showError ? 'ID not found' : 'ID game'">
 
-            <button (click)="loadGame('idGame')" class="toggle-btn" href="#toggle-form"
+            <button (click)="loadGame(idGame)" class="toggle-btn"
                 data-toggle="collapse">Connect</button>
 
         </div>

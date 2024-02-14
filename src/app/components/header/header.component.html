@@ -1,8 +1,8 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary" id="navbar" style="padding: 0;">
+  <div class="div-logo" >
+    <h1 class="logo me-auto"><a [routerLink]="['/home']">El <span>Burro</span></a></h1>
+  </div>
   <div class="container-fluid" style="background-color: #1e242a;padding: 23px;">
-    <div style="margin-right: 15px;">
-      <h1 class="logo me-auto"><a [routerLink]="['/home']">El <span>Burro</span></a></h1>
-    </div>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -13,7 +13,10 @@
         <a class="nav-link" [routerLink]="['/home']" [routerLinkActive]="['active']">Home</a>
         <a class="nav-link" [routerLink]="['/profile']" [routerLinkActive]="['active']">Profile</a>
         <li class="nav-item"><a class="nav-link">Team</a></li>
+        @if (isLoggedUser) {
+          <li class="nav-item"><a class="nav-link">Estadisticas</a></li>
 
+        }
       </ul>
     </div>
 
@@ -29,10 +32,10 @@
     </a>
 
     @if (!isLoggedUser) {
-    <a [routerLink]="['/userManagement','login']" class="get-started-btn login">Log In</a>
-    <a [routerLink]="['/userManagement','register']" class="get-started-btn">Sign Up</a>
+    <a [routerLink]="['/userManagement/mode','login']" class="get-started-btn login">Log In</a>
+    <a [routerLink]="['/userManagement/mode','register']" class="get-started-btn">Sign Up</a>
     }@else{
-    <a [routerLink]="['/userManagement','logout']" class="get-started-btn login">Logout</a>
+    <a [routerLink]="['/userManagement/mode','logout']" class="get-started-btn login">Logout</a>
     <a [routerLink]="['/profile']" class="get-started-btn">Profile</a>
 
     }

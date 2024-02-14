@@ -59,13 +59,13 @@ export class ProfileComponent implements AfterViewInit  {
         )
         .subscribe((profile) => this.formulario.setValue(profile));
     } else {
-      this.showPopUp('profile', 'userManagement/login');
+      this.showPopUp('profile', '/userManagement/mode/login');
     }
   }
 
   onSubmit() {
     if (this.formulario.valid) {
-      this.userService.setProfile(this.formulario);
+      //this.userService.setProfile(this.formulario);
     } else {
       console.error('El formulario no es válido');
     }
