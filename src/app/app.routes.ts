@@ -16,8 +16,8 @@ export const routes: Routes = [
 
   { path: 'userManagement/logout', component: LoginComponent },
   { path: 'profile', component: ProfileComponent },
-  { path: 'game', component: HomeGameComponent }, //NO podras acceder a game sin loguear
-  { path: 'game/:setmode', component: HomeGameComponent }, //NO podras acceder a game sin loguear
+  { path: 'game', component: HomeGameComponent, canActivate:[AuthGuardGame]}, //NO podras acceder a game sin loguear
+  { path: 'game/:setmode', component: HomeGameComponent, canActivate:[AuthGuardGame] }, //NO podras acceder a game sin loguear
   { path: 'board', component: BoardComponent },
 
   { path: '', component: HomeComponent },

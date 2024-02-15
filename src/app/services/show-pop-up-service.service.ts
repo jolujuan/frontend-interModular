@@ -31,8 +31,11 @@ export class ShowPopUpServiceService {
         case 'expira':
           return '<p> La sesión ha expirado. Por favor, vuelve a iniciar sesión. </p>';
           break;
-        case 'favoritesSave':
-          return '<p>Inicia sesión para guardar favoritos. </p>';
+        case 'gameCompleted':
+          return '<p>Sala llena, por favor unete a otra. </p>';
+          break;
+          case 'playerCompleted':
+          return '<p>Usted ya pertenece a esta sala. </p>';
           break;
         default:
           return '<p>Contenido no disponible.</p>';

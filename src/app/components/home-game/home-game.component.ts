@@ -1,9 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ApiServiceService } from '../../services/api-service.service';
+import { ShowPopUpServiceService } from '../../services/show-pop-up-service.service';
 
 @Component({
   selector: 'app-home-game',
@@ -13,29 +14,22 @@ import { ApiServiceService } from '../../services/api-service.service';
   styleUrl: './home-game.component.css',
 })
 export class HomeGameComponent implements OnInit {
-  idGame!: number;
+  @ViewChild('divPopUp') divPopUp: ElementRef | undefined;
+  idBoard!: number;
   @Input()
   set setmode(value: number) {
-    this.idGame = value;
+    this.idBoard = value;
   }
 
-  constructor(private router: Router, private apiService: ApiServiceService) {}
+  constructor(
+    private router: Router,
+    private apiService: ApiServiceService,
+    private popupService: ShowPopUpServiceService
+  ) {}
 
   ngOnInit(): void {
-    if (this.idGame != null || this.idGame != undefined) {
-      const nickname = sessionStorage.getItem('nickname');
-      const storedToken = sessionStorage.getItem('idToken');
-
-      if (nickname != null && storedToken != null) {
-        const token = JSON.parse(storedToken); //Realizar la conversion a objeto
-
-        this.apiService.createBoard(nickname, token.token).subscribe({
-          next: (response)=>{
-            console.log("resuesta recivida al front")
-          }
-        });
-      }
-    }
+    this.checkAndCreateBoard();
+    this.addPlayersBoard();
     this.loadPlayers();
   }
 
@@ -53,13 +47,57 @@ export class HomeGameComponent implements OnInit {
   player3: string = 'Jugador 3';
   player4: string = 'Jugador 4';
 
-  mostrarNotificacion: boolean = false;
-  copiarAlPortapapeles(idGame: string) {
-    let texto = document.getElementById(idGame)!.innerText;
-    navigator.clipboard.writeText(texto).then(() => {
-      this.mostrarNotificacion = true;
-      setTimeout(() => (this.mostrarNotificacion = false), 2000); // Oculta la notificación después de 2 segundos
-    });
+  getStoredUserData(): {
+    storedNickname: string | null;
+    storedToken: string | null;
+  } {
+    const storedNickname = sessionStorage.getItem('nickname');
+    const storedToken = sessionStorage.getItem('idToken');
+    return { storedNickname, storedToken };
+  }
+
+  checkAndCreateBoard(): void {
+    //Si no existe el id de la partida, crear y guardar el primer jugador
+    if (this.idBoard === null || this.idBoard === undefined) {
+      const { storedNickname, storedToken } = this.getStoredUserData();
+      if (storedNickname && storedToken) {
+        const token = JSON.parse(storedToken);
+        this.apiService.createBoard(storedNickname, token.token).subscribe({
+          next: (response) => {
+            this.idBoard = response.idTablero;
+          },
+        });
+      }
+    }
+  }
+
+  addPlayersBoard() {
+    //Si existe id partida guardar nuevos jugadores
+    if (this.idBoard != null || this.idBoard != undefined) {
+      const { storedNickname, storedToken } = this.getStoredUserData();
+      if (storedNickname && storedToken) {
+        const token = JSON.parse(storedToken);
+        this.apiService
+          .addPlayersBoard(storedNickname, this.idBoard, token.token)
+          .subscribe({
+            next: (response) => {
+              console.log("error lleno");
+              console.log(response);
+              console.log(response["ERROR "]);
+              
+              
+              if (response["ERROR "] === 'ERROR_ONLY_4_PLAYERS_IN_1_GAME') {
+                //Enviarlo al inicio con datos vacios
+                this.showPopUp('gameCompleted', '');
+              }
+              
+            },
+            error: (error) => {
+              console.log('error guardando nuevo jugador ', error.message);
+            },
+          });
+      }
+    }
   }
 
   loadPlayers() {
@@ -75,5 +113,24 @@ export class HomeGameComponent implements OnInit {
 
   loadGame() {
     this.router.navigate(['/board']);
+  }
+
+  mostrarNotificacion: boolean = false;
+  copiarAlPortapapeles(idBoard: string) {
+    let texto = document.getElementById(idBoard)!.innerText;
+    navigator.clipboard.writeText(texto).then(() => {
+      this.mostrarNotificacion = true;
+      setTimeout(() => (this.mostrarNotificacion = false), 2000); // Oculta la notificación después de 2 segundos
+    });
+  }
+
+  showPopUp(type: string, ruta: string) {
+    this.divPopUp!.nativeElement.appendChild(this.popupService.popup(type));
+    this.popupService.showPopup();
+    this.popupService.onClosePopup.subscribe(() => {
+        //Ejecutar solamente si no ha pasado id game
+        this.router.navigate([ruta]);
+      
+    });
   }
 }

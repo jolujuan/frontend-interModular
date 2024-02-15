@@ -22,25 +22,28 @@ import { UsersServiceService } from '../../services/users.service.service';
 export class HomeComponent {
   constructor(
     private router: Router,
-    private usersService: UsersServiceService
+    private usersService: UsersServiceService,
   ) {}
 
-  idGame!: string;
+  idBoard!: number;
   errorPage: string = '';
   showError: boolean = false;
 
-  loadGame(idGame: string) {
-    if (!this.idGame) {
+  loadGame(idBoard: number) {
+    if (!this.idBoard) {
       this.showError = true;
       return;
     } else if (!this.usersService.isLogged()) {
       //Enviar a loguear si no ha iniciado sesion con el id de la partida
-      this.router.navigate(['/userManagement/mode'], { queryParams: { setmode: 'login', setgame: idGame } });
+      this.router.navigate(['/userManagement/mode'], { queryParams: { setmode: 'login', setgame: idBoard } });
+    }else{
+      //Si esta logueado dejar ir la partida
+       this.router.navigate(['/game', `${this.idBoard}`])
     }
     this.showError = false;
   }
 
-  navigateToLogin(idGame: string) {
-    this.router.navigate(['/userManagement/mode'], { queryParams: { setmode: 'login', setgame: idGame } });
+  navigateToLogin(idBoard: number) {
+    this.router.navigate(['/userManagement/mode'], { queryParams: { setmode: 'login', setgame: idBoard } });
   }
 }

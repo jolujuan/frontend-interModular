@@ -20,6 +20,8 @@ export class ApiServiceService {
   };
 
   boardSubject = new Subject<string>();
+  playersBoardSubject = new Subject<string>();
+
 
   createBoard(nickname: string, token: string): Observable<any> {
     let datos = { returnSecureToken: true };
@@ -44,6 +46,26 @@ export class ApiServiceService {
         catchError((error: HttpErrorResponse) => {
           console.log(error);
 
+          return throwError(() => new Error('Datos incorrectos'));
+        })
+      );
+  }
+
+  addPlayersBoard(nickname:string, idTablero:number, token:string):Observable<any>{
+    let datos = { returnSecureToken: true };
+
+    return this.http
+      .post<any>(
+        `http://localhost:8090/api/v1/addPlayer/name/${nickname}/table/${idTablero}`,
+        datos,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
           return throwError(() => new Error('Datos incorrectos'));
         })
       );
