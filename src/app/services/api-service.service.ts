@@ -2,7 +2,6 @@ import {
   HttpClient,
   HttpErrorResponse,
   HttpHeaders,
-  HttpResponse,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject, catchError, tap, throwError } from 'rxjs';
@@ -47,7 +46,11 @@ export class ApiServiceService {
       );
   }
 
-  addPlayersBoard(nickname:string, idTablero:number, token:string):Observable<any>{
+  addPlayersBoard(
+    nickname: string,
+    idTablero: number,
+    token: string
+  ): Observable<any> {
     let datos = { returnSecureToken: true };
 
     return this.http
@@ -68,10 +71,36 @@ export class ApiServiceService {
   }
 
   statusBoardSubject = new Subject<StatusBoard>();
-  getStatusBoard( idTablero:number, token:string):Observable<any>{    
+  getStatusBoard(idTablero: number, token: string): Observable<any> {
     return this.http
-      .get<any>(
-        `http://localhost:8090/api/v1/getStatusBoard/${idTablero}`,
+      .get<any>(`http://localhost:8090/api/v1/getStatusBoard/${idTablero}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .pipe(
+        tap((response) => {
+          const statusInfo = {
+            player1: response.Player_1,
+            player2: response.Player_2,
+            player3: response.Player_3,
+            player4: response.Player_4,
+          };
+          this.statusBoardSubject.next(statusInfo);
+        }),
+        catchError((error: HttpErrorResponse) => {
+          return throwError(() => new Error('Datos incorrectos'));
+        })
+      );
+  }
+
+  startGameBoard(idTablero: number, token: string): Observable<any> {
+    let datos = { returnSecureToken: true };
+
+    return this.http
+      .post<any>(
+        `http://localhost:8090/api/v1/startGame/${idTablero}`,
+        datos,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -79,18 +108,7 @@ export class ApiServiceService {
         }
       )
       .pipe(
-        tap((response) => {
-          console.log('response ', response);
-
-          const statusInfo={
-            player1:response.Player_1,
-            player2:response.Player_2,
-            player3:response.Player_3,
-            player4:response.Player_4,
-          };
-          this.statusBoardSubject.next(statusInfo);
-        }),
-        catchError((error: HttpErrorResponse) => {          
+        catchError((error: HttpErrorResponse) => {
           return throwError(() => new Error('Datos incorrectos'));
         })
       );

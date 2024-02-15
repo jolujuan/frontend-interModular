@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 
@@ -10,5 +10,10 @@ import { FooterComponent } from '../footer/footer.component';
   styleUrl: './board.component.css'
 })
 export class BoardComponent {
-
+  idBoard!: number;
+  interval!: any;
+  @Input()
+  set setgame(value: number) {
+    this.idBoard = value;
+  }
 }

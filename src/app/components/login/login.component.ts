@@ -227,7 +227,7 @@ export class LoginComponent implements OnInit {
         this.game
           ? (this.showPopUp('register', ''),
             this.router.navigate(['/userManagement/mode'], {
-              queryParams: { setmode: 'register', setgame: this.game },
+              queryParams: { setmode: 'login', setgame: this.game },
             }))
           : this.showPopUp('register', 'userManagement/mode/login');
       },

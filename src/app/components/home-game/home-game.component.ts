@@ -16,6 +16,7 @@ import { ShowPopUpServiceService } from '../../services/show-pop-up-service.serv
 export class HomeGameComponent implements OnInit {
   @ViewChild('divPopUp') divPopUp: ElementRef | undefined;
   idBoard!: number;
+  interval!: any;
   @Input()
   set setmode(value: number) {
     this.idBoard = value;
@@ -32,7 +33,7 @@ export class HomeGameComponent implements OnInit {
     this.addPlayersBoard();
   }
 
-  playGlobal: boolean = true;
+  playGlobal: boolean = false;
   playPlayer1: boolean = false;
   playPlayer2: boolean = false;
   playPlayer3: boolean = false;
@@ -68,9 +69,8 @@ export class HomeGameComponent implements OnInit {
           },
         });
       }
-    }else{      
+    } else {
       this.getStatusBoard(); //LLamar a guardar los nombres si existen
-
     }
   }
 
@@ -98,10 +98,7 @@ export class HomeGameComponent implements OnInit {
   }
 
   getStatusBoard() {
-    console.log(this.idBoard);
-
     if (this.idBoard != null || this.idBoard != undefined) {
-      console.log('entra aqui');
       const { storedNickname, storedToken } = this.getStoredUserData();
       if (storedNickname && storedToken) {
         const token = JSON.parse(storedToken);
@@ -121,25 +118,38 @@ export class HomeGameComponent implements OnInit {
         };
 
         getStatus();
-        setInterval(getStatus, 2000); //Actualizar los datos para que se reflejen en los usuarios
+        this.interval = setInterval(getStatus, 2000); //Actualizar los datos para que se reflejen en los usuarios
       }
     }
   }
 
   loadPlayers() {
-      this.playPlayer1 = this.player1 != 'Jugador-1';
-      this.playPlayer2 = this.player2 != 'Jugador-2';
-      this.playPlayer3 = this.player3 != 'Jugador-3';
-      this.playPlayer4 = this.player4 != 'Jugador-4';
+    this.playPlayer1 = this.player1 != 'Jugador-1';
+    this.playPlayer2 = this.player2 != 'Jugador-2';
+    this.playPlayer3 = this.player3 != 'Jugador-3';
+    this.playPlayer4 = this.player4 != 'Jugador-4';
 
-      if (this.player1 != 'Jugador 1' && this.player2 != 'Jugador 2') {
-        this.playGlobal = true;
-      }
-   
+    if (this.player1 != 'Jugador-1' && this.player2 != 'Jugador-2') {
+      this.playGlobal = true;
+    }
   }
 
   loadGame() {
-    this.router.navigate(['/board']);
+    if (this.idBoard != null || this.idBoard != undefined) {
+      const { storedToken } = this.getStoredUserData();
+      if (storedToken) {
+        const token = JSON.parse(storedToken);
+        this.apiService.startGameBoard(this.idBoard, token.token).subscribe({
+          next: (response) => {
+            clearInterval(this.interval);//Parar de ejecutar el codigo anterior
+             this.router.navigate(['/board', `${this.idBoard}`])
+          },
+          error: (error) => {
+            console.log('error iniciando el juego ', error.message);
+          },
+        });
+      }
+    }
   }
 
   mostrarNotificacion: boolean = false;

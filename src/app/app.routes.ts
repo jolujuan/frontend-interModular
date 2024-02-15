@@ -18,7 +18,8 @@ export const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'game', component: HomeGameComponent, canActivate:[AuthGuardGame]}, //NO podras acceder a game sin loguear
   { path: 'game/:setmode', component: HomeGameComponent, canActivate:[AuthGuardGame] }, //NO podras acceder a game sin loguear
-  { path: 'board', component: BoardComponent },
+  /* { path: 'board/:setgame', component: BoardComponent,canActivate:[AuthGuardGame]  },//No acceder al tablero si no tiene sesion */
+  { path: 'board', component: BoardComponent},//No acceder al tablero si no tiene sesion
 
   { path: '', component: HomeComponent },
   { path: '**', component: NotFound404Component }, //Pagina cuando no se han encontrado los datos
