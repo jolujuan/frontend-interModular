@@ -6,6 +6,7 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject, catchError, tap, throwError } from 'rxjs';
+import { StatusBoard } from '../../interfaces/statusBoard';
 
 @Injectable({
   providedIn: 'root',
@@ -20,9 +21,6 @@ export class ApiServiceService {
   };
 
   boardSubject = new Subject<string>();
-  playersBoardSubject = new Subject<string>();
-
-
   createBoard(nickname: string, token: string): Observable<any> {
     let datos = { returnSecureToken: true };
 
@@ -38,8 +36,6 @@ export class ApiServiceService {
       )
       .pipe(
         tap((response) => {
-          console.log('response ', response);
-
           const boardInfo = response.idTablero;
           this.boardSubject.next(boardInfo);
         }),
@@ -66,6 +62,35 @@ export class ApiServiceService {
       )
       .pipe(
         catchError((error: HttpErrorResponse) => {
+          return throwError(() => new Error('Datos incorrectos'));
+        })
+      );
+  }
+
+  statusBoardSubject = new Subject<StatusBoard>();
+  getStatusBoard( idTablero:number, token:string):Observable<any>{    
+    return this.http
+      .get<any>(
+        `http://localhost:8090/api/v1/getStatusBoard/${idTablero}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .pipe(
+        tap((response) => {
+          console.log('response ', response);
+
+          const statusInfo={
+            player1:response.Player_1,
+            player2:response.Player_2,
+            player3:response.Player_3,
+            player4:response.Player_4,
+          };
+          this.statusBoardSubject.next(statusInfo);
+        }),
+        catchError((error: HttpErrorResponse) => {          
           return throwError(() => new Error('Datos incorrectos'));
         })
       );
