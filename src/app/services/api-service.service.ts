@@ -4,20 +4,15 @@ import {
   HttpHeaders,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subject, catchError, tap, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, catchError, tap, throwError } from 'rxjs';
 import { StatusBoard } from '../../interfaces/statusBoard';
+import { QuestionBoard } from '../../interfaces/questionBoard';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiServiceService {
   constructor(private http: HttpClient) {}
-
-  private httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-    }),
-  };
 
   boardSubject = new Subject<string>();
   createBoard(nickname: string, token: string): Observable<any> {
@@ -39,8 +34,6 @@ export class ApiServiceService {
           this.boardSubject.next(boardInfo);
         }),
         catchError((error: HttpErrorResponse) => {
-          console.log(error);
-
           return throwError(() => new Error('Datos incorrectos'));
         })
       );
@@ -98,9 +91,31 @@ export class ApiServiceService {
     let datos = { returnSecureToken: true };
 
     return this.http
-      .post<any>(
-        `http://localhost:8090/api/v1/startGame/${idTablero}`,
-        datos,
+      .post<any>(`http://localhost:8090/api/v1/startGame/${idTablero}`, datos, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          return throwError(() => new Error('Datos incorrectos'));
+        })
+      );
+  }
+
+  /* EMPIEZA A PEDIR LAS PREGUNTAS */
+
+  questionSubject = new BehaviorSubject<QuestionBoard | null>(null);
+  getQuestion(
+    category: string,
+    idTablero: number,
+    token: string
+  ): Observable<any> {
+    let datos = { returnSecureToken: true };
+
+    return this.http
+      .get<any>(
+        `http://localhost:8090/api/v1/questions/category/${category}/table/${idTablero}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -108,6 +123,49 @@ export class ApiServiceService {
         }
       )
       .pipe(
+        tap((response) => {          
+          const questionInfo = {
+            question: response.question,
+            idQuestion: response.idQuestion,
+            answer1: response.answer1,
+            answer2: response.answer2,
+            answer3: response.answer3,
+            answer4: response.answer4,
+          };
+
+          this.questionSubject.next(questionInfo);
+        }),
+        catchError((error: HttpErrorResponse) => {
+          return throwError(() => new Error('Datos incorrectos'));
+        })
+      );
+  }
+
+  /* COMPROBAR SI LA PREGUNTA ES CORRECTA */
+
+  checkQuestionSubject = new Subject<string>();
+  checkQuestion(
+    answer: string,
+    idQuestion: number,
+    idBoard: number,
+    nickname: string,
+    token: string
+  ): Observable<any> {
+    let datos = { returnSecureToken: true };
+    return this.http
+      .get<any>(
+        `http://localhost:8090/api/v1/questions/answer?resultsCorrectAnswer=${answer}&idPregunta=${idQuestion}&idTable=${idBoard}&nickname=${nickname}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .pipe(
+        tap((response) => {                    
+          const answerInfo = response.Result;
+          this.checkQuestionSubject.next(answerInfo);
+        }),
         catchError((error: HttpErrorResponse) => {
           return throwError(() => new Error('Datos incorrectos'));
         })

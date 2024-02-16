@@ -118,7 +118,7 @@ export class HomeGameComponent implements OnInit {
         };
 
         getStatus();
-        this.interval = setInterval(getStatus, 2000); //Actualizar los datos para que se reflejen en los usuarios
+        //this.interval = setInterval(getStatus, 2000); //Actualizar los datos para que se reflejen en los usuarios
       }
     }
   }
