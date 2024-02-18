@@ -62,7 +62,8 @@
 .pregunta-header-uno {
   grid-column: 1;
 
-  margin-bottom: 20px;/* para sin tiempo */
+  margin-bottom: 20px;
+  /* para sin tiempo */
 
 }
 
@@ -120,6 +121,8 @@
   padding: 20px;
 }
 
+.joselu-token {}
+
 .pregunta-footer-item {
   text-align: center;
   border-radius: 5px;
@@ -162,22 +165,6 @@
   grid-row: 2;
   grid-column: 2;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -290,6 +277,8 @@ button {
   border-radius: 20%;
 
 }
+
+#board{position: relative;}
 
 .cell {
   background-size: cover;

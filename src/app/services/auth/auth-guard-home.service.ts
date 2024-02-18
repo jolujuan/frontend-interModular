@@ -18,7 +18,7 @@ import {  ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot } f
   }
 
   private isLoggedIn(): boolean {
-    return !!sessionStorage.getItem('idToken');
+    return !!localStorage.getItem('idToken');
   }
 }
 

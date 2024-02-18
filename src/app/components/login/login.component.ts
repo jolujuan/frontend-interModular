@@ -45,7 +45,7 @@ export class LoginComponent implements OnInit {
       if (setMode) {
         this.mode = setMode;
         if (setMode === 'logout') {
-          sessionStorage.clear();
+          localStorage.clear();
           this.router.navigate(['']);
         }
       }

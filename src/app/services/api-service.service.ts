@@ -105,7 +105,7 @@ export class ApiServiceService {
 
   /* EMPIEZA A PEDIR LAS PREGUNTAS */
 
-  questionSubject = new BehaviorSubject<QuestionBoard | null>(null);
+   questionSubject = new BehaviorSubject<QuestionBoard | null>(null);
   getQuestion(
     category: string,
     idTablero: number,
@@ -165,6 +165,38 @@ export class ApiServiceService {
         tap((response) => {                    
           const answerInfo = response.Result;
           this.checkQuestionSubject.next(answerInfo);
+        }),
+        catchError((error: HttpErrorResponse) => {
+          return throwError(() => new Error('Datos incorrectos'));
+        })
+      );
+  }
+
+  /* REALIZAR MOVIMIENTO */
+  /* POST  http://localhost:8090/api/v1/movePlayer/joselu/number/3/table/1  HTTP/1.1
+ */
+  doMovementSubject = new Subject<string>();
+  doMovement(
+    nickname: string,
+    movement: number,
+    idBoard: number,
+    token: string
+  ): Observable<any> {
+    let datos = { returnSecureToken: true };
+    return this.http
+      .post<any>(
+        `http://localhost:8090/api/v1/movePlayer/${nickname}/number/${movement}/table/${idBoard}`,
+        datos,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .pipe(
+        tap((response) => {                    
+          const answerInfo = response.TipoCasilla;
+          this.doMovementSubject.next(answerInfo);
         }),
         catchError((error: HttpErrorResponse) => {
           return throwError(() => new Error('Datos incorrectos'));

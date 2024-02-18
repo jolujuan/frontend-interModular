@@ -1,4 +1,10 @@
-import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  Input,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiServiceService } from '../../services/api-service.service';
 import { FooterComponent } from '../footer/footer.component';
@@ -44,6 +50,7 @@ export class BoardComponent implements OnInit {
   categoyQuestion!: string;
   showQuestion: boolean = false;
   isButtonDisabled: boolean = false;
+  isButtonDisabledExtra: boolean = true;
 
   @Input()
   set setgame(value: number) {
@@ -61,75 +68,73 @@ export class BoardComponent implements OnInit {
     //Empezar a leer los jugadores de la base
     this.getStatusBoard();
   }
-
   getStoredUserData(): {
     storedNickname: string | null;
     storedToken: string | null;
   } {
-    const storedNickname = sessionStorage.getItem('nickname');
-    const storedToken = sessionStorage.getItem('idToken');
+    const storedNickname = localStorage.getItem('nickname');
+    const storedToken = localStorage.getItem('idToken');
     return { storedNickname, storedToken };
   }
 
   getStatusBoard() {
     if (this.idBoard != null || this.idBoard != undefined) {
-      /* const { storedNickname, storedToken } = this.getStoredUserData();
+      const { storedNickname, storedToken } = this.getStoredUserData();
       if (storedNickname && storedToken) {
-         const token = JSON.parse(storedToken); */
+        const token = JSON.parse(storedToken);
 
-      const token =
-        'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqb3NlbHUiLCJpYXQiOjE3MDgxMjI1MzEsImV4cCI6MTcwODE1ODUzMX0.aL2kHGrJ_ZjvCCNpPX8yWEdy6zYdCZ-28JWhnuCJyM0';
-      this.apiService.getStatusBoard(this.idBoard, token).subscribe({
-        next: (response) => {
-          //Evitar guardar en el array si no hay jugador
-          this.players = [];
+        this.apiService.getStatusBoard(this.idBoard, token.token).subscribe({
+          next: (response) => {
+            //Evitar guardar en el array si no hay jugador
+            this.players = [];
 
-          if (response.Player_1 !== 'Jugador-1') {
-            this.players.push(response.Player_1);
-          }
-          if (response.Player_2 !== 'Jugador-2') {
-            this.players.push(response.Player_2);
-          }
+            if (response.Player_1 !== 'Jugador-1') {
+              this.players.push(response.Player_1);
+            }
+            if (response.Player_2 !== 'Jugador-2') {
+              this.players.push(response.Player_2);
+            }
 
-          if (response.Player_3 !== 'Jugador-3') {
-            this.players.push(response.Player_3);
-          }
+            if (response.Player_3 !== 'Jugador-3') {
+              this.players.push(response.Player_3);
+            }
 
-          if (response.Player_4 !== 'Jugador-4') {
-            this.players.push(response.Player_4);
-          }
-          //Inicializar el tablero una vez generados los jugadores
-          this.createBoard();
-        },
-      });
-      /* } */
+            if (response.Player_4 !== 'Jugador-4') {
+              this.players.push(response.Player_4);
+            }
+            //Inicializar el tablero una vez generados los jugadores
+            this.createBoard();
+          },
+        });
+      }
     }
   }
 
   getQuestions(category: string) {
     if (this.idBoard != null || this.idBoard != undefined) {
-      /* const { storedNickname, storedToken } = this.getStoredUserData();
+      const { storedNickname, storedToken } = this.getStoredUserData();
       if (storedNickname && storedToken) {
-         const token = JSON.parse(storedToken); */
+        const token = JSON.parse(storedToken);
 
-      const token =
-        'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqb3NlbHUiLCJpYXQiOjE3MDgxMjI1MzEsImV4cCI6MTcwODE1ODUzMX0.aL2kHGrJ_ZjvCCNpPX8yWEdy6zYdCZ-28JWhnuCJyM0';
-      this.apiService.getQuestion(category, this.idBoard, token).subscribe({
-        next: (response) => {
-          this.question = response.question;
-          this.idQuestion = response.idQuestion;
-          this.answer1 = response.answer1;
-          this.answer2 = response.answer2;
-          this.answer3 = response.answer3;
-          this.answer4 = response.answer4;
-        },
-      });
-      (document.querySelector('.tablero') as HTMLElement)!.style.opacity =
-        '0.5';
-      this.categoyQuestion = category;
-      this.showQuestion = true;
-      this.isButtonDisabled = true;
-      /* } */
+        this.apiService
+          .getQuestion(category, this.idBoard, token.token)
+          .subscribe({
+            next: (response) => {
+              this.question = response.question;
+              this.idQuestion = response.idQuestion;
+              this.answer1 = response.answer1;
+              this.answer2 = response.answer2;
+              this.answer3 = response.answer3;
+              this.answer4 = response.answer4;
+            },
+          });
+        (document.querySelector('.tablero') as HTMLElement)!.style.opacity =
+          '0.5';
+        this.categoyQuestion = category;
+        this.showQuestion = true;
+        this.isButtonDisabled = true;
+        this.isButtonDisabledExtra = true;
+      }
     }
   }
 
@@ -140,57 +145,110 @@ export class BoardComponent implements OnInit {
   }
   correctAnswer: boolean = false;
   showCorrectAnswer: boolean = false;
+
   sendAnswer() {
     if (this.selectedAnswer) {
       console.log('Respuesta enviada:', this.selectedAnswer);
 
       if (this.idBoard != null || this.idBoard != undefined) {
-        // const { storedNickname, storedToken } = this.getStoredUserData();
-        //if (storedNickname && storedToken) {
-        // const token = JSON.parse(storedToken);
+        const { storedNickname, storedToken } = this.getStoredUserData();
+        if (storedNickname && storedToken) {
+          const token = JSON.parse(storedToken);
 
-        const token =
-          'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqb3NlbHUiLCJpYXQiOjE3MDgxMjAzNTksImV4cCI6MTcwODE1NjM1OX0.BPqjQbHrvffQeaLX_nsdsvGPYox0KvnMOfAz649_oRU';
-        console.log(
-          this.selectedAnswer,
-          this.idQuestion,
-          this.idBoard,
-          this.players[this.currentPlayerIndex],
-          token
-        );
-
-        this.apiService
-          .checkQuestion(
+          console.log(
             this.selectedAnswer,
             this.idQuestion,
             this.idBoard,
             this.players[this.currentPlayerIndex],
             token
-          )
-          .subscribe({
-            next: (response) => {
-              //Convertilo a boleano
-              this.correctAnswer = response.Result === 'true';
+          );
 
-              if (this.correctAnswer) {
-                this.showQuestion = false; //Cerrar las preguntas si es correcta
-              }else {
-                this.correctAnswer = false;
-                this.showCorrectAnswer = true;
+          this.apiService
+            .checkQuestion(
+              this.selectedAnswer!,
+              this.idQuestion,
+              this.idBoard,
+              this.players[this.currentPlayerIndex],
+              token.token
+            )
+            .subscribe({
+              next: (response) => {
+                //Convertilo a boleano
+                this.correctAnswer = response.Result === 'true';
+
+                if (this.correctAnswer) {
+                  this.isButtonDisabledExtra = false;
+                  this.showQuestion = false; //Cerrar las preguntas si es correcta
+                } else {
+                  this.isButtonDisabledExtra = true;
+                  this.correctAnswer = false;
+                  this.showCorrectAnswer = true;
+                  setTimeout(() => {
+                    //Esperar 6 segundos antes de quitar el aviso de que ha introducido una respuesta incorrecta
+                    this.showQuestion = false;
+                  }, 4000);
+                }
+              },
+            });
+          this.isButtonDisabled = false; //Activar de nuevo los botones
+          //Restablecer la opacidad del tablero
+          (document.querySelector('.tablero') as HTMLElement)!.style.opacity =
+            '1';
+        }
+      }
+    }
+  }
+  playerActual: string = '';
+  async doMovement(diceResult: number, player: string) {
+    if (this.idBoard != null || this.idBoard != undefined) {
+      const { storedNickname, storedToken } = this.getStoredUserData();
+      if (storedNickname && storedToken) {
+        const token = JSON.parse(storedToken);
+
+        this.apiService
+          .doMovement(player, diceResult, this.idBoard, token.token)
+          .subscribe({
+            next: async (response) => {
+              console.log(response.TipoCasilla);
+              if (response.TipoCasilla === 'BONIFICACION') {
+                const currentPlayerToken = document.querySelector(
+                  `.${player}-token`
+                );
+
+                this.moveTokenRecursively(currentPlayerToken, diceResult, 0);
+
+                console.log('se procedera a lanzar pregunta');
+
                 setTimeout(() => {
-                  //Esperar 6 segundos antes de quitar el aviso de que ha introducido una respuesta incorrecta
-                  this.showQuestion = false;
-                }, 4000);
+                  this.rollColor();
+                }, 3000);
+
+                this.playerActual = player; //Actualizar el jugador actual por si acierta pregunta podre continuar
+              } else if (response.TipoCasilla === 'NORMAL') {
+                const currentPlayerToken = document.querySelector(
+                  `.${player}-token`
+                );
+                this.moveTokenRecursively(currentPlayerToken, diceResult, 0);
               }
             },
           });
-          this.isButtonDisabled = false; //Activar de nuevo los botones
-          //Restablecer la opacidad del tablero
-          (document.querySelector(
-            '.tablero'
-          ) as HTMLElement)!.style.opacity = '1';
+      }
+    }
+  }
 
-        // }
+  doMovementExtra(diceResult: number, player: string) {
+    if (this.idBoard != null || this.idBoard != undefined) {
+      const { storedNickname, storedToken } = this.getStoredUserData();
+      if (storedNickname && storedToken) {
+        const token = JSON.parse(storedToken);
+
+        this.apiService
+          .doMovement(player, diceResult, this.idBoard, token.token)
+          .subscribe({
+            next: (response) => {
+              console.log('movimiento de pregunta extra realizado');
+            },
+          });
       }
     }
   }
@@ -201,40 +259,41 @@ export class BoardComponent implements OnInit {
   contador3: number = 1;
   contador4: number = 1;
 
+  numbers = [
+    null,
+    'Burro Sabelotodo',
+    'Coz del Burro Retrocede 3 Casillas',
+    null,
+    'Burro Sabelotodo',
+    null,
+    null,
+    null,
+    null,
+    null,
+    'Burro Sabelotodo',
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    'Burro Sabelotodo',
+    null,
+    'Burro Sabelotodo',
+    'Salida',
+    null,
+    null,
+    null,
+    'Coz del Burro Retrocede 3 Casillas',
+  ];
+
   createBoard() {
     const board = document.getElementById('board');
-    const numbers = [
-      '¡Qué Burro Soy!',
-      null,
-      'Coz del Burro Retrocede 3 Casillas',
-      null,
-      'Burro Sabelotodo',
-      null,
-      null,
-      null,
-      null,
-      null,
-      'Burro Sabelotodo',
-      null,
-      null,
-      null,
-      '¡Qué Burro Soy!',
-      null,
-      null,
-      null,
-      null,
-      null,
-      'Salida',
-      null,
-      'Qué Burro Soy',
-      null,
-      'Coz del Burro Retrocede 3 Casillas',
-    ];
 
-    for (let i = 0; i < numbers.length; i++) {
+    for (let i = 0; i < this.numbers.length; i++) {
       const cell = document.createElement('div');
       cell.classList.add('cell');
-      cell.textContent = numbers[i] !== null ? numbers[i] : '';
+      cell.textContent = this.numbers[i] !== null ? this.numbers[i] : '';
       if (i === 12) {
         const img = document.createElement('img');
         img.src = 'https://i.postimg.cc/85P0jK5M/burro-Culote.png';
@@ -264,33 +323,49 @@ export class BoardComponent implements OnInit {
       }
       board!.appendChild(cell);
     }
+    const currentPlayerToken = document.querySelector(`.joselu-token`);
+    this.loadPosition();
+  }
+
+  rollExtra() {
+    const resultElement = document.getElementById('diceResultColor');
+    const diceResult = Math.ceil(Math.random() * 2);
+    resultElement!.textContent = `Resultado del dado: ${diceResult}`;
+
+    const currentPlayerToken = document.querySelector(
+      `.${this.playerActual}-token`
+    );
+
+    let contadorTurno = 0;
+    this.moveTokenRecursively(currentPlayerToken, diceResult, contadorTurno);
+
+    this.currentPlayerIndex =
+      (this.currentPlayerIndex + 1) % this.players.length;
+
+    this.doMovementExtra(diceResult, this.playerActual);
+    this.isButtonDisabledExtra = true;
+    this.correctAnswer = false;
+
+    console.log(this.contador1);
   }
 
   rollNum() {
     const resultElement = document.getElementById('diceResult');
-    const diceResult = Math.ceil(Math.random() * 4);
+    const diceResult = Math.ceil(Math.random() * 2);
     resultElement!.textContent = `Resultado del dado: ${diceResult}`;
-    const currentPlayerToken = document.querySelector(
-      `.${this.players[this.currentPlayerIndex]}-token`
-    );
-
-    let contadorTurno = 0;
-    //Solo realizar el movimiento si la pregunta es correcta    
-    if (this.correctAnswer)
-      this.moveTokenRecursively(currentPlayerToken, diceResult, contadorTurno);
 
     this.currentPlayerIndex =
       (this.currentPlayerIndex + 1) % this.players.length;
+
+    this.doMovement(diceResult, this.players[this.currentPlayerIndex]);
 
     this.correctAnswer = false;
   }
 
   rollColor() {
-    const resultElement = document.getElementById('diceResultColor');
     const colors = ['green', 'blue', 'orange', 'red'];
     const diceResult = Math.ceil(Math.random() * 4);
     const colorAleatorio = colors[diceResult - 1];
-    resultElement!.textContent = `Resultado del color: ${colorAleatorio}`;
 
     let category = '';
     switch (colorAleatorio) {
@@ -484,6 +559,31 @@ export class BoardComponent implements OnInit {
     }
   }
 
+  verifyBurroSabelotodo() {
+    const burroSabelotodoIndices = this.numbers.reduce((acc, val, i) => {
+      if (val === 'Burro Sabelotodo') {
+        acc.push(i);
+      }
+      return acc;
+    }, [] as number[]);
+
+    const playerPositions = [
+      this.contador1,
+      this.contador2,
+      this.contador3,
+      this.contador4,
+    ];
+
+    playerPositions.forEach((position, index) => {
+      if (burroSabelotodoIndices.includes(position)) {
+        console.log(
+          `¡El jugador ${this.players[index]} ha caído en la casilla "Burro Sabelotodo"!`
+        );
+        // Realizar acciones específicas para cuando caen en "Burro Sabelotodo"
+      }
+    });
+  }
+
   back7TokenRecursively(token: any, diceResult: number, contadorBack: number) {
     const currentPositionBottom = parseInt(
       window
@@ -602,24 +702,184 @@ export class BoardComponent implements OnInit {
 
   checkWinner() {
     if (this.contador2 >= 17) {
-      alert('¡El Jugador 2 ha ganado!');
+      alert(`¡El Jugador ${this.players[1]} ha ganado!`);
       this.disableRollDiceButton();
       return;
     }
     if (this.contador1 >= 17) {
-      alert('¡El Jugador 1 ha ganado!');
+      alert(`¡El Jugador ${this.players[0]} ha ganado!`);
       this.disableRollDiceButton();
       return;
     }
     if (this.contador3 >= 17) {
-      alert('¡El Jugador 1 ha ganado!');
+      alert(`¡El Jugador ${this.players[2]} ha ganado!`);
       this.disableRollDiceButton();
       return;
     }
     if (this.contador4 >= 17) {
-      alert('¡El Jugador 1 ha ganado!');
+      alert(`¡El Jugador ${this.players[3]} ha ganado!`);
       this.disableRollDiceButton();
       return;
     }
+  }
+
+  /* METODO PARA CARGAR LAS POSICIONES */
+  loadPosition() {
+    /* const casillaJugador = {
+      player1: 5,
+      player2: 5,
+      player3: 5,
+      player4: 5,
+    };
+ */
+
+    const casillaJugador = [
+      { player: 'player1', pos: 3 },
+      { player: 'player2', pos: 7 },
+      { player: 'player3', pos: 7 },
+      { player: 'player4', pos: 2 },
+    ];
+
+    for (let i = 0; i < casillaJugador.length; i++) {
+      if (casillaJugador[i].player === 'player1') {
+        const pos = casillaJugador[i].pos;
+        const playerClass = casillaJugador[i].player + '-token'; // Clase dinámica
+        const initialPosition = { bottom: 55, right: 80 };
+
+        const posCalculated = this.calculatePosition(pos, initialPosition);
+
+        let currentPlayerToken = document.querySelector(
+          '.' + playerClass
+        ) as HTMLElement; // Asegúrate de que es un HTMLElement
+        const board = document.getElementById('board');
+
+        if (!currentPlayerToken) {
+          currentPlayerToken = document.createElement('div');
+          currentPlayerToken.classList.add('player-token', playerClass);
+          currentPlayerToken.style.backgroundColor = 'blue'; 
+          board!.appendChild(currentPlayerToken); 
+        }
+
+        // Actualiza la posición de la ficha del jugador
+        currentPlayerToken.style.bottom = posCalculated.bottom + 'px';
+        currentPlayerToken.style.right = posCalculated.right + 'px';
+      }
+
+      if (casillaJugador[i].player === 'player2') {
+        const pos = casillaJugador[i].pos;
+        const playerClass = casillaJugador[i].player + '-token'; // Clase dinámica
+        const initialPosition = { bottom: 15, right: 25 };
+        this.calculatePosition(pos, initialPosition);
+
+        const posCalculated = this.calculatePosition(pos, initialPosition);
+
+        let currentPlayerToken = document.querySelector(
+          '.' + playerClass
+        ) as HTMLElement; // Asegúrate de que es un HTMLElement
+        const board = document.getElementById('board');
+
+        if (!currentPlayerToken) {
+          currentPlayerToken = document.createElement('div');
+          currentPlayerToken.classList.add('player-token', playerClass);
+          currentPlayerToken.style.backgroundColor = 'blue'; 
+          board!.appendChild(currentPlayerToken); 
+        }
+
+        // Actualiza la posición de la ficha del jugador
+        currentPlayerToken.style.bottom = posCalculated.bottom + 'px';
+        currentPlayerToken.style.right = posCalculated.right + 'px';
+      }
+
+      if (casillaJugador[i].player === 'player3') {
+        const pos = casillaJugador[i].pos;
+        const playerClass = casillaJugador[i].player + '-token'; // Clase dinámica
+        const initialPosition = { bottom: 15, right: 80 };
+        this.calculatePosition(pos, initialPosition);
+
+        const posCalculated = this.calculatePosition(pos, initialPosition);
+
+        let currentPlayerToken = document.querySelector(
+          '.' + playerClass
+        ) as HTMLElement; // Asegúrate de que es un HTMLElement
+        const board = document.getElementById('board');
+
+        if (!currentPlayerToken) {
+          currentPlayerToken = document.createElement('div');
+          currentPlayerToken.classList.add('player-token', playerClass);
+          currentPlayerToken.style.backgroundColor = 'blue'; 
+          board!.appendChild(currentPlayerToken); 
+        }
+
+        // Actualiza la posición de la ficha del jugador
+        currentPlayerToken.style.bottom = posCalculated.bottom + 'px';
+        currentPlayerToken.style.right = posCalculated.right + 'px';
+      }
+
+      if (casillaJugador[i].player === 'player4') {
+        const pos = casillaJugador[i].pos;
+        const playerClass = casillaJugador[i].player + '-token'; // Clase dinámica
+        const initialPosition = { bottom: 55, right: 25 };
+        this.calculatePosition(pos, initialPosition);
+
+        const posCalculated = this.calculatePosition(pos, initialPosition);
+
+        let currentPlayerToken = document.querySelector(
+          '.' + playerClass
+        ) as HTMLElement; // Asegúrate de que es un HTMLElement
+        const board = document.getElementById('board');
+
+        if (!currentPlayerToken) {
+          currentPlayerToken = document.createElement('div');
+          currentPlayerToken.classList.add('player-token', playerClass);
+          currentPlayerToken.style.backgroundColor = 'blue'; 
+          board!.appendChild(currentPlayerToken); 
+        }
+
+        // Actualiza la posición de la ficha del jugador
+        currentPlayerToken.style.bottom = posCalculated.bottom + 'px';
+        currentPlayerToken.style.right = posCalculated.right + 'px';
+      }
+    }
+  }
+
+  calculatePosition(
+    squareNumber: number,
+    position: { bottom: number; right: number }
+  ): { bottom: number; right: number } {
+    // Aquí iría la lógica para calcular la posición
+
+    const stepsY = 110; // 100 de altura de casilla + 10 de margen
+    const stepsX = 135; // 125 de ancho de casilla + 10 de margen
+
+    // Asignamos el valor inicial para 'bottom' y 'right' basado en la salida del tablero
+    const startPosition = { bottom: position.bottom, right: position.right };
+
+    // Calcula la posición en base al número de casilla
+    if (squareNumber >= 1 && squareNumber <= 5) {
+      // Se mueve hacia arriba
+      position.bottom = startPosition.bottom + (squareNumber - 1) * stepsY;
+      position.right = startPosition.right;
+    } else if (squareNumber >= 6 && squareNumber <= 10) {
+      // Se mueve hacia la derecha
+      position.bottom = startPosition.bottom + 4 * stepsY; // La última posición hacia arriba
+      position.right = startPosition.right + (squareNumber - 6) * stepsX;
+    } else if (squareNumber >= 11 && squareNumber <= 15) {
+      // Se mueve hacia abajo
+      position.bottom =
+        startPosition.bottom + (4 - (squareNumber - 11)) * stepsY;
+      position.right = startPosition.right + 4 * stepsX; // La última posición hacia la derecha
+    } else if (squareNumber >= 16 && squareNumber <= 18) {
+      // Se mueve hacia la izquierda
+      position.bottom = startPosition.bottom;
+      position.right = startPosition.right + (4 - (squareNumber - 16)) * stepsX;
+    } else if (squareNumber >= 19 && squareNumber <= 21) {
+      // Se mueve hacia arriba otra vez
+      position.bottom = startPosition.bottom + (squareNumber - 18) * stepsY;
+      position.right = startPosition.right; // La última posición hacia la izquierda
+    }
+
+    console.log(position);
+
+    return position;
   }
 }

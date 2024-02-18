@@ -51,8 +51,8 @@ export class HomeGameComponent implements OnInit {
     storedNickname: string | null;
     storedToken: string | null;
   } {
-    const storedNickname = sessionStorage.getItem('nickname');
-    const storedToken = sessionStorage.getItem('idToken');
+    const storedNickname = localStorage.getItem('nickname');
+    const storedToken = localStorage.getItem('idToken');
     return { storedNickname, storedToken };
   }
 
@@ -118,7 +118,7 @@ export class HomeGameComponent implements OnInit {
         };
 
         getStatus();
-        //this.interval = setInterval(getStatus, 2000); //Actualizar los datos para que se reflejen en los usuarios
+        this.interval = setInterval(getStatus, 2000); //Actualizar los datos para que se reflejen en los usuarios
       }
     }
   }
