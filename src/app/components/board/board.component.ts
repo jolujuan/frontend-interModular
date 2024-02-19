@@ -167,14 +167,6 @@ export class BoardComponent implements OnInit,OnDestroy {
         if (storedNickname && storedToken) {
           const token = JSON.parse(storedToken);
 
-          console.log(
-            this.selectedAnswer,
-            this.idQuestion,
-            this.idBoard,
-            this.players[this.currentPlayerIndex],
-            token
-          );
-
           this.apiService
             .checkQuestion(
               this.selectedAnswer!,
@@ -223,7 +215,6 @@ export class BoardComponent implements OnInit,OnDestroy {
           .doMovement(player, diceResult, this.idBoard, token.token)
           .subscribe({
             next: async (response) => {
-              console.log(response.TipoCasilla);
               if (response.TipoCasilla === 'BONIFICACION') {
                 const currentPlayerToken = document.querySelector(
                   `.${player}-token`
@@ -390,8 +381,6 @@ export class BoardComponent implements OnInit,OnDestroy {
     this.currentPlayerIndex =
       (this.currentPlayerIndex + 1) % this.players.length;
 
-    console.log(this.players[this.currentPlayerIndex]);
-    console.log(this.players.length);
     //Realizar el movimiento en la base y despues mostrar la pregunta si es BONIFICACION
     this.doMovement(diceResult, this.players[this.currentPlayerIndex]);
 
