@@ -173,8 +173,6 @@ export class ApiServiceService {
   }
 
   /* REALIZAR MOVIMIENTO */
-  /* POST  http://localhost:8090/api/v1/movePlayer/joselu/number/3/table/1  HTTP/1.1
- */
   doMovementSubject = new Subject<string>();
   doMovement(
     nickname: string,
@@ -197,6 +195,38 @@ export class ApiServiceService {
         tap((response) => {                    
           const answerInfo = response.TipoCasilla;
           this.doMovementSubject.next(answerInfo);
+        }),
+        catchError((error: HttpErrorResponse) => {
+          return throwError(() => new Error('Datos incorrectos'));
+        })
+      );
+  }
+
+  /* COMPROBAR MOVIMIENTO */
+  /* POST http://localhost:8090/api/v1/checkMovement/NORMAL/player/joselu/table/1  HTTP/1.1
+ */
+
+  checkMovement(
+    type: string,
+    nickname: string,
+    idBoard: number,
+    token: string
+  ): Observable<any> {
+    let datos = { returnSecureToken: true };
+    return this.http
+      .post<any>(
+        `http://localhost:8090/api/v1/checkMovement/${type}/player/${nickname}/table/${idBoard}`,
+        datos,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .pipe(
+        tap((response) => {                    
+          console.log(response);
+          
         }),
         catchError((error: HttpErrorResponse) => {
           return throwError(() => new Error('Datos incorrectos'));

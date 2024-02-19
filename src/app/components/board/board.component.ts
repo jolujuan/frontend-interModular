@@ -131,6 +131,7 @@ export class BoardComponent implements OnInit {
         (document.querySelector('.tablero') as HTMLElement)!.style.opacity =
           '0.5';
         this.categoyQuestion = category;
+        //Mostrar la pregunta y deshabilitar votones
         this.showQuestion = true;
         this.isButtonDisabled = true;
         this.isButtonDisabledExtra = true;
@@ -138,8 +139,8 @@ export class BoardComponent implements OnInit {
     }
   }
 
+  //Se lee la respuesta pasada por html
   selectedAnswer: string | null = null;
-
   selectAnswer(answer: string) {
     this.selectedAnswer = answer;
   }
@@ -178,19 +179,21 @@ export class BoardComponent implements OnInit {
 
                 if (this.correctAnswer) {
                   this.isButtonDisabledExtra = false;
-                  this.showQuestion = false; //Cerrar las preguntas si es correcta
+                  //Desactivar el boton numerico para activar el de pregunta extra
+                  this.isButtonDisabled = true;
+                  this.showQuestion = false;
                 } else {
                   this.isButtonDisabledExtra = true;
+                  this.isButtonDisabled = false;
                   this.correctAnswer = false;
                   this.showCorrectAnswer = true;
                   setTimeout(() => {
-                    //Esperar 6 segundos antes de quitar el aviso de que ha introducido una respuesta incorrecta
+                    //Esperar 4 segundos antes de quitar el aviso de que ha introducido una respuesta incorrecta
                     this.showQuestion = false;
                   }, 4000);
                 }
               },
             });
-          this.isButtonDisabled = false; //Activar de nuevo los botones
           //Restablecer la opacidad del tablero
           (document.querySelector('.tablero') as HTMLElement)!.style.opacity =
             '1';
@@ -215,20 +218,42 @@ export class BoardComponent implements OnInit {
                   `.${player}-token`
                 );
 
+                //Mover el jugador
                 this.moveTokenRecursively(currentPlayerToken, diceResult, 0);
+                this.isButtonDisabled = true; //Deshabilitar el boton normal
 
-                console.log('se procedera a lanzar pregunta');
-
+                //Mostrar pregunta, llamar a recuperar respuestas y enviar
                 setTimeout(() => {
                   this.rollColor();
                 }, 3000);
 
-                this.playerActual = player; //Actualizar el jugador actual por si acierta pregunta podre continuar
+                //Actualizar el jugador actual por si acierta pregunta poder cambiar al siguiente jugador
+                this.playerActual = player;
               } else if (response.TipoCasilla === 'NORMAL') {
                 const currentPlayerToken = document.querySelector(
                   `.${player}-token`
                 );
                 this.moveTokenRecursively(currentPlayerToken, diceResult, 0);
+              }
+
+              if (response.TipoCasilla != 'NOT_YOUR_TURN') {
+                //Cambiar el turno del jugador siempre que no se pase
+                let tipoCasilla = response.tipoCasilla;
+                if (response.TipoCasilla === 'BONIFICACION') {
+                  //cambiar el turno aunque este mal la pregunta, porque el boton
+                  //de lanzar dado estara desactivado si no ha acertado la pregunta
+                  tipoCasilla = 'NORMAL';
+                }
+
+                this.apiService
+                  .checkMovement(tipoCasilla, player, this.idBoard, token.token)
+                  .subscribe({
+                    error: (response) => {
+                      console.log(
+                        'Ha habido un error al hacer el cambio de turno'
+                      );
+                    },
+                  });
               }
             },
           });
@@ -236,6 +261,7 @@ export class BoardComponent implements OnInit {
     }
   }
 
+  //Guardar el movimiento extra solo en la base
   doMovementExtra(diceResult: number, player: string) {
     if (this.idBoard != null || this.idBoard != undefined) {
       const { storedNickname, storedToken } = this.getStoredUserData();
@@ -246,14 +272,15 @@ export class BoardComponent implements OnInit {
           .doMovement(player, diceResult, this.idBoard, token.token)
           .subscribe({
             next: (response) => {
-              console.log('movimiento de pregunta extra realizado');
+              this.isButtonDisabled = false; //Activar de nuevo el boton para lanzar
             },
           });
       }
     }
   }
 
-  currentPlayerIndex: number = 0;
+  //Para cambiar de jugador se le sumara +1, entonces el primer elemento será 0
+  currentPlayerIndex: number = -1;
   contador1: number = 1;
   contador2: number = 1;
   contador3: number = 1;
@@ -327,6 +354,7 @@ export class BoardComponent implements OnInit {
     this.loadPosition();
   }
 
+  //Mover solo el jugador en el DOM y guardar el movimiento en la base
   rollExtra() {
     const resultElement = document.getElementById('diceResultColor');
     const diceResult = Math.ceil(Math.random() * 2);
@@ -335,18 +363,12 @@ export class BoardComponent implements OnInit {
     const currentPlayerToken = document.querySelector(
       `.${this.playerActual}-token`
     );
-
     let contadorTurno = 0;
     this.moveTokenRecursively(currentPlayerToken, diceResult, contadorTurno);
-
-    this.currentPlayerIndex =
-      (this.currentPlayerIndex + 1) % this.players.length;
 
     this.doMovementExtra(diceResult, this.playerActual);
     this.isButtonDisabledExtra = true;
     this.correctAnswer = false;
-
-    console.log(this.contador1);
   }
 
   rollNum() {
@@ -357,6 +379,9 @@ export class BoardComponent implements OnInit {
     this.currentPlayerIndex =
       (this.currentPlayerIndex + 1) % this.players.length;
 
+    console.log(this.players[this.currentPlayerIndex]);
+    console.log(this.players.length);
+    //Realizar el movimiento en la base y despues mostrar la pregunta si es BONIFICACION
     this.doMovement(diceResult, this.players[this.currentPlayerIndex]);
 
     this.correctAnswer = false;
@@ -756,8 +781,8 @@ export class BoardComponent implements OnInit {
         if (!currentPlayerToken) {
           currentPlayerToken = document.createElement('div');
           currentPlayerToken.classList.add('player-token', playerClass);
-          currentPlayerToken.style.backgroundColor = 'blue'; 
-          board!.appendChild(currentPlayerToken); 
+          currentPlayerToken.style.backgroundColor = 'blue';
+          board!.appendChild(currentPlayerToken);
         }
 
         // Actualiza la posición de la ficha del jugador
@@ -781,8 +806,8 @@ export class BoardComponent implements OnInit {
         if (!currentPlayerToken) {
           currentPlayerToken = document.createElement('div');
           currentPlayerToken.classList.add('player-token', playerClass);
-          currentPlayerToken.style.backgroundColor = 'blue'; 
-          board!.appendChild(currentPlayerToken); 
+          currentPlayerToken.style.backgroundColor = 'blue';
+          board!.appendChild(currentPlayerToken);
         }
 
         // Actualiza la posición de la ficha del jugador
@@ -806,8 +831,8 @@ export class BoardComponent implements OnInit {
         if (!currentPlayerToken) {
           currentPlayerToken = document.createElement('div');
           currentPlayerToken.classList.add('player-token', playerClass);
-          currentPlayerToken.style.backgroundColor = 'blue'; 
-          board!.appendChild(currentPlayerToken); 
+          currentPlayerToken.style.backgroundColor = 'blue';
+          board!.appendChild(currentPlayerToken);
         }
 
         // Actualiza la posición de la ficha del jugador
@@ -831,8 +856,8 @@ export class BoardComponent implements OnInit {
         if (!currentPlayerToken) {
           currentPlayerToken = document.createElement('div');
           currentPlayerToken.classList.add('player-token', playerClass);
-          currentPlayerToken.style.backgroundColor = 'blue'; 
-          board!.appendChild(currentPlayerToken); 
+          currentPlayerToken.style.backgroundColor = 'blue';
+          board!.appendChild(currentPlayerToken);
         }
 
         // Actualiza la posición de la ficha del jugador
