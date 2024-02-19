@@ -1,7 +1,9 @@
 import {
   AfterViewInit,
   Component,
+  HostListener,
   Input,
+  OnDestroy,
   OnInit,
   ViewEncapsulation,
 } from '@angular/core';
@@ -18,7 +20,7 @@ import { HeaderComponent } from '../header/header.component';
   styleUrl: './board.component.css',
   encapsulation: ViewEncapsulation.None, // Desactiva el encapsulamiento de estilos
 })
-export class BoardComponent implements OnInit {
+export class BoardComponent implements OnInit,OnDestroy {
   idBoard!: number;
   interval!: any;
 
@@ -61,6 +63,15 @@ export class BoardComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router
   ) {}
+
+  
+  @HostListener('window:beforeunload', ['$event'])
+  unloadNotification($event: any): void {
+    $event.returnValue = 'Estás a punto de salir de la página, ¿estás seguro?';
+  }
+
+  ngOnDestroy(): void {
+  }
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       this.idBoard = +params['setgame'];
@@ -759,7 +770,7 @@ export class BoardComponent implements OnInit {
  */
 
     const casillaJugador = [
-      { player: 'player1', pos: 3 },
+      { player: 'player1', pos: 16 },
       { player: 'player2', pos: 7 },
       { player: 'player3', pos: 7 },
       { player: 'player4', pos: 2 },
@@ -781,7 +792,7 @@ export class BoardComponent implements OnInit {
         if (!currentPlayerToken) {
           currentPlayerToken = document.createElement('div');
           currentPlayerToken.classList.add('player-token', playerClass);
-          currentPlayerToken.style.backgroundColor = 'blue';
+          currentPlayerToken.style.backgroundColor = 'red';
           board!.appendChild(currentPlayerToken);
         }
 

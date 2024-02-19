@@ -1,4 +1,4 @@
-/* @media only  screen and (max-width: 920px) and (orientation: landscape) {
+@media only  screen and (max-width: 920px) and (orientation: landscape) {
   .container-main {
     transform: scale(0.6) translate(-39%,-30%);
     height: 150vh;
@@ -9,7 +9,7 @@
     background-color: #FFAE42;
   
   }
-} */
+}
 
 
 .pregunta {

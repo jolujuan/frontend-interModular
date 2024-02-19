@@ -106,8 +106,6 @@ export class HomeGameComponent implements OnInit {
         const getStatus = () => {
           this.apiService.getStatusBoard(this.idBoard, token.token).subscribe({
             next: (response) => {
-              console.log(response);
-
               this.player1 = response.Player_1;
               this.player2 = response.Player_2;
               this.player3 = response.Player_3;
