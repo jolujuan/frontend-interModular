@@ -1,8 +1,6 @@
 # ¿QUIÉN ES EL MÁS BURRO?
 
-<a href="https://giphy.com/gifs/3evgs1hgFoltxqzmkp">
-    <img src="https://media.giphy.com/media/3evgs1hgFoltxqzmkp/giphy.gif" width="480" height="270" alt="¿Quién es el más burro?">
-</a>
+[![¿Quién es el más burro?](https://media.giphy.com/media/3evgs1hgFoltxqzmkp/giphy.gif)](https://giphy.com/gifs/3evgs1hgFoltxqzmkp)
 
 
 _Este proyecto desarrollado como proyecto intermodular final para la clase de 2º de DAW del Instituto Simarro, es un juego educativo interactivo destinado a fomentar el aprendizaje a través del juego. Utilizando tecnologías como Angular para el frontend y Spring Boot para el backend, el juego ofrece una experiencia dinámica y educativa. Los jugadores pueden registrarse, iniciar sesión y competir respondiendo preguntas de múltiples categorías para avanzar en el tablero, todo ello gestionado por una base de datos MySQL._
