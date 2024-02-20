@@ -1,7 +1,5 @@
 import {
-  AfterViewInit,
   Component,
-  HostListener,
   Input,
   OnDestroy,
   OnInit,
@@ -20,7 +18,7 @@ import { HeaderComponent } from '../header/header.component';
   styleUrl: './board.component.css',
   encapsulation: ViewEncapsulation.None, // Desactiva el encapsulamiento de estilos
 })
-export class BoardComponent implements OnInit,OnDestroy {
+export class BoardComponent implements OnInit, OnDestroy {
   idBoard!: number;
   interval!: any;
 
@@ -36,6 +34,7 @@ export class BoardComponent implements OnInit,OnDestroy {
   player2!: string;
   player3!: string;
   player4!: string;
+  currentPlayerBase!: string;
 
   classPlayer1!: string;
   classPlayer2!: string;
@@ -64,20 +63,18 @@ export class BoardComponent implements OnInit,OnDestroy {
     private router: Router
   ) {}
 
-  
-  @HostListener('window:beforeunload', ['$event'])
+  /* @HostListener('window:beforeunload', ['$event'])
   unloadNotification($event: any): void {
     $event.returnValue = 'Estás a punto de salir de la página, ¿estás seguro?';
   }
-
-  ngOnDestroy(): void {
-  }
+ */
+  ngOnDestroy(): void {}
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       this.idBoard = +params['setgame'];
     });
-    //Empezar a leer los jugadores de la base
-    this.getStatusBoard();
+    this.getStatusBoard(); //Empezar a leer los jugadores de la base
+    this.reloadCellsPlayers(); //Sincronizar las casilla con los jugadores
   }
   getStoredUserData(): {
     storedNickname: string | null;
@@ -120,8 +117,43 @@ export class BoardComponent implements OnInit,OnDestroy {
       }
     }
   }
+  /* Cargar desde la base la posicion para convertirla a las coordenadas de la casilla subyacente */
+  reloadCellsPlayers() {
+    if (this.idBoard != null || this.idBoard != undefined) {
+      const { storedNickname, storedToken } = this.getStoredUserData();
+      if (storedNickname && storedToken) {
+        const token = JSON.parse(storedToken);
+        const getStatus = () => {
+          this.apiService.getStatusBoard(this.idBoard, token.token).subscribe({
+            next: (response) => {
+              this.currentPlayerBase = response.TurnoJugador;
 
+              const casillaJugador = [
+                { player: 'player1', pos: response.casillaPlayer1 },
+                { player: 'player2', pos: response.casillaPlayer2 },
+                { player: 'player3', pos: response.casillaPlayer3 },
+                { player: 'player4', pos: response.casillaPlayer4 },
+              ];
+              //Cargar la posicion de todas las fichas
+              this.loadPosition(casillaJugador);
+
+              if (!this.metodoEjecutado)//Ocultar boton movimiento si esta en pregunta
+                this.isButtonDisabled =
+                  storedNickname !== this.currentPlayerBase;
+            },
+          });
+        };
+        getStatus();
+        this.interval = setInterval(getStatus, 1000); //Actualizar los datos para que se reflejen en los usuarios
+      }
+    }
+  }
+  metodoEjecutado: boolean = false;
   getQuestions(category: string) {
+    this.metodoEjecutado = true;
+     //Mostrar la pregunta y deshabilitar botones
+     this.isButtonDisabled = true;
+     this.isButtonDisabledExtra = true;
     if (this.idBoard != null || this.idBoard != undefined) {
       const { storedNickname, storedToken } = this.getStoredUserData();
       if (storedNickname && storedToken) {
@@ -142,10 +174,8 @@ export class BoardComponent implements OnInit,OnDestroy {
         (document.querySelector('.tablero') as HTMLElement)!.style.opacity =
           '0.5';
         this.categoyQuestion = category;
-        //Mostrar la pregunta y deshabilitar votones
         this.showQuestion = true;
-        this.isButtonDisabled = true;
-        this.isButtonDisabledExtra = true;
+
       }
     }
   }
@@ -161,7 +191,6 @@ export class BoardComponent implements OnInit,OnDestroy {
   sendAnswer() {
     if (this.selectedAnswer) {
       console.log('Respuesta enviada:', this.selectedAnswer);
-
       if (this.idBoard != null || this.idBoard != undefined) {
         const { storedNickname, storedToken } = this.getStoredUserData();
         if (storedNickname && storedToken) {
@@ -172,7 +201,7 @@ export class BoardComponent implements OnInit,OnDestroy {
               this.selectedAnswer!,
               this.idQuestion,
               this.idBoard,
-              this.players[this.currentPlayerIndex],
+              this.currentPlayerBase,
               token.token
             )
             .subscribe({
@@ -181,11 +210,14 @@ export class BoardComponent implements OnInit,OnDestroy {
                 this.correctAnswer = response.Result === 'true';
 
                 if (this.correctAnswer) {
-                  this.isButtonDisabledExtra = false;
                   //Desactivar el boton numerico para activar el de pregunta extra
                   this.isButtonDisabled = true;
-                  this.showQuestion = false;
+                  this.isButtonDisabledExtra = false;
+                  this.showQuestion = false; //Ocultar pregunta
+                  this.metodoEjecutado=true;
+
                 } else {
+                  this.metodoEjecutado=false;
                   this.isButtonDisabledExtra = true;
                   this.isButtonDisabled = false;
                   this.correctAnswer = false;
@@ -204,8 +236,7 @@ export class BoardComponent implements OnInit,OnDestroy {
       }
     }
   }
-  playerActual: string = '';
-  async doMovement(diceResult: number, player: string) {
+  async doMovement(diceResult: number, player: string, callback: () => void) {
     if (this.idBoard != null || this.idBoard != undefined) {
       const { storedNickname, storedToken } = this.getStoredUserData();
       if (storedNickname && storedToken) {
@@ -227,10 +258,7 @@ export class BoardComponent implements OnInit,OnDestroy {
                 //Mostrar pregunta, llamar a recuperar respuestas y enviar
                 setTimeout(() => {
                   this.rollColor();
-                }, 3000);
-
-                //Actualizar el jugador actual por si acierta pregunta poder cambiar al siguiente jugador
-                this.playerActual = player;
+                }, 2000);
               } else if (response.TipoCasilla === 'NORMAL') {
                 const currentPlayerToken = document.querySelector(
                   `.${player}-token`
@@ -238,18 +266,20 @@ export class BoardComponent implements OnInit,OnDestroy {
                 this.moveTokenRecursively(currentPlayerToken, diceResult, 0);
               }
 
-              if (response.TipoCasilla != 'NOT_YOUR_TURN') {
-                //Cambiar el turno del jugador siempre que no se pase
+              if (
+                response.TipoCasilla != 'NOT_YOUR_TURN' &&
+                response.TipoCasilla != 'BONIFICACION'
+              ) {
+                //No cambiar el turno si se ha pasado o es una pregunta
                 let tipoCasilla = response.tipoCasilla;
-                if (response.TipoCasilla === 'BONIFICACION') {
-                  //cambiar el turno aunque este mal la pregunta, porque el boton
-                  //de lanzar dado estara desactivado si no ha acertado la pregunta
-                  tipoCasilla = 'NORMAL';
-                }
 
                 this.apiService
                   .checkMovement(tipoCasilla, player, this.idBoard, token.token)
                   .subscribe({
+                    next: (response) => {
+                      //Llamamos a actualizar fichas una vez procesado el movimiento
+                      callback();
+                    },
                     error: (response) => {
                       console.log(
                         'Ha habido un error al hacer el cambio de turno'
@@ -264,7 +294,7 @@ export class BoardComponent implements OnInit,OnDestroy {
   }
 
   //Guardar el movimiento extra solo en la base
-  doMovementExtra(diceResult: number, player: string) {
+  doMovementExtra(diceResult: number, player: string, callback: () => void) {
     if (this.idBoard != null || this.idBoard != undefined) {
       const { storedNickname, storedToken } = this.getStoredUserData();
       if (storedNickname && storedToken) {
@@ -274,7 +304,31 @@ export class BoardComponent implements OnInit,OnDestroy {
           .doMovement(player, diceResult, this.idBoard, token.token)
           .subscribe({
             next: (response) => {
-              this.isButtonDisabled = false; //Activar de nuevo el boton para lanzar
+              const currentPlayerToken = document.querySelector(
+                `.${player}-token`
+              );
+              this.moveTokenRecursively(currentPlayerToken, diceResult, 0);
+              //this.isButtonDisabled = false; //Activar de nuevo el boton para lanzar
+              this.metodoEjecutado=false;
+              //Cambiar el turno si es correcta la pregunta
+              this.apiService
+                .checkMovement(
+                  response.tipoCasilla,
+                  player,
+                  this.idBoard,
+                  token.token
+                )
+                .subscribe({
+                  next: (response) => {
+                    //Sincronizamos los cambios de la actualizacion de las fichas
+                    callback();
+                  },
+                  error: (response) => {
+                    console.log(
+                      'Ha habido un error al hacer el cambio de turno'
+                    );
+                  },
+                });
             },
           });
       }
@@ -282,7 +336,7 @@ export class BoardComponent implements OnInit,OnDestroy {
   }
 
   //Para cambiar de jugador se le sumara +1, entonces el primer elemento será 0
-  currentPlayerIndex: number = -1;
+  //currentPlayerIndex: number = -1;
   contador1: number = 1;
   contador2: number = 1;
   contador3: number = 1;
@@ -316,17 +370,20 @@ export class BoardComponent implements OnInit,OnDestroy {
     'Coz del Burro Retrocede 3 Casillas',
   ];
 
+  board!: HTMLElement;
+  cell!: HTMLDivElement;
+
   createBoard() {
-    const board = document.getElementById('board');
+    this.board = document.getElementById('board') as HTMLElement;
 
     for (let i = 0; i < this.numbers.length; i++) {
-      const cell = document.createElement('div');
-      cell.classList.add('cell');
-      cell.textContent = this.numbers[i] !== null ? this.numbers[i] : '';
+      this.cell = document.createElement('div');
+      this.cell.classList.add('cell');
+      this.cell.textContent = this.numbers[i] !== null ? this.numbers[i] : '';
       if (i === 12) {
         const img = document.createElement('img');
         img.src = 'https://i.postimg.cc/85P0jK5M/burro-Culote.png';
-        cell.appendChild(img);
+        this.cell.appendChild(img);
       }
       if (i === 20) {
         console.log(this.players);
@@ -334,8 +391,9 @@ export class BoardComponent implements OnInit,OnDestroy {
         for (let j = 0; j < this.players.length; j++) {
           // Crear fichas para cada jugador
           const playerToken = document.createElement('div');
+
           playerToken.classList.add('player-token', `${this.players[j]}-token`);
-          cell.appendChild(playerToken);
+          this.cell.appendChild(playerToken);
 
           //Guardar para cada casilla las propiedades del objeto
           const style = this.playerStyles[j % this.playerStyles.length];
@@ -350,10 +408,8 @@ export class BoardComponent implements OnInit,OnDestroy {
           this.classPlayer4 = `${this.players[3]}-token`;
         }
       }
-      board!.appendChild(cell);
+      this.board!.appendChild(this.cell);
     }
-    const currentPlayerToken = document.querySelector(`.joselu-token`);
-    this.loadPosition();
   }
 
   //Mover solo el jugador en el DOM y guardar el movimiento en la base
@@ -362,28 +418,23 @@ export class BoardComponent implements OnInit,OnDestroy {
     const diceResult = Math.ceil(Math.random() * 2);
     resultElement!.textContent = `Resultado del dado: ${diceResult}`;
 
-    const currentPlayerToken = document.querySelector(
-      `.${this.playerActual}-token`
-    );
-    let contadorTurno = 0;
-    this.moveTokenRecursively(currentPlayerToken, diceResult, contadorTurno);
-
-    this.doMovementExtra(diceResult, this.playerActual);
+    this.doMovementExtra(diceResult, this.currentPlayerBase, () => {
+      //Esperar a que se haga el cambio de turno antes de vovler a cargar las casillas
+      this.reloadCellsPlayers();
+    });
     this.isButtonDisabledExtra = true;
     this.correctAnswer = false;
   }
 
   rollNum() {
     const resultElement = document.getElementById('diceResult');
-    const diceResult = Math.ceil(Math.random() * 2);
+    const diceResult = Math.ceil(Math.random() * 1);
     resultElement!.textContent = `Resultado del dado: ${diceResult}`;
 
-    this.currentPlayerIndex =
-      (this.currentPlayerIndex + 1) % this.players.length;
-
-    //Realizar el movimiento en la base y despues mostrar la pregunta si es BONIFICACION
-    this.doMovement(diceResult, this.players[this.currentPlayerIndex]);
-
+    this.doMovement(diceResult, this.currentPlayerBase, () => {
+      //Esperar a que se haga el cambio de turno antes de vovler a cargar las casillas
+      this.reloadCellsPlayers();
+    });
     this.correctAnswer = false;
   }
 
@@ -749,162 +800,171 @@ export class BoardComponent implements OnInit,OnDestroy {
   }
 
   /* METODO PARA CARGAR LAS POSICIONES */
-  loadPosition() {
-    /* const casillaJugador = {
-      player1: 5,
-      player2: 5,
-      player3: 5,
-      player4: 5,
-    };
- */
+  loadPosition(casillaJugador: { player: string; pos: number }[]) {
+    //Pasamos el jugador para reconocerlo y leerlo del array
+    //guardando a su vez la clase para cambiar sus propiedes
+    //son cambiadas desde el metodo que calculatePosition y lo recoje de un json
+    casillaJugador.forEach(({ player, pos }) => {
+      this.calculatePosition(player, pos)
+        .then(({ bottom, right }) => {
+          let playerClass = '';
 
-    const casillaJugador = [
-      { player: 'player1', pos: 16 },
-      { player: 'player2', pos: 7 },
-      { player: 'player3', pos: 7 },
-      { player: 'player4', pos: 2 },
-    ];
+          if (player === 'player1') {
+            playerClass = this.players[0] + '-token';
+          }
+          if (player === 'player2') {
+            playerClass = this.players[1] + '-token';
+          }
+          if (player === 'player3') {
+            playerClass = this.players[2] + '-token';
+          }
+          if (player === 'player4') {
+            playerClass = this.players[3] + '-token';
+          }
 
-    for (let i = 0; i < casillaJugador.length; i++) {
+          const playerTokens = document.querySelectorAll(`.${playerClass}`);
+          playerTokens.forEach((token) => {
+            if (token instanceof HTMLElement) {
+              token.style.bottom = `${bottom}px`;
+              token.style.right = `${right}px`;
+              token.style.color = 'black;';
+            }
+          });
+        })
+        .catch((error) => console.error(error));
+    });
+
+    /* for (let i = 0; i < casillaJugador.length; i++) {
       if (casillaJugador[i].player === 'player1') {
         const pos = casillaJugador[i].pos;
         const playerClass = casillaJugador[i].player + '-token'; // Clase dinámica
-        const initialPosition = { bottom: 55, right: 80 };
 
-        const posCalculated = this.calculatePosition(pos, initialPosition);
+        const posCalculated = this.calculatePosition('player1', pos)
+          .then((position) => {
+            const playerToken = document.createElement('div');
+            playerToken.classList.add('player-token', playerClass);
+            playerToken.style.backgroundColor = 'blue';
+            // Actualiza la posición de la ficha del jugador
+            playerToken.style.bottom = position.bottom + 'px';
+            playerToken.style.right = position.right + 'px';
 
-        let currentPlayerToken = document.querySelector(
-          '.' + playerClass
-        ) as HTMLElement; // Asegúrate de que es un HTMLElement
-        const board = document.getElementById('board');
-
-        if (!currentPlayerToken) {
-          currentPlayerToken = document.createElement('div');
-          currentPlayerToken.classList.add('player-token', playerClass);
-          currentPlayerToken.style.backgroundColor = 'red';
-          board!.appendChild(currentPlayerToken);
-        }
-
-        // Actualiza la posición de la ficha del jugador
-        currentPlayerToken.style.bottom = posCalculated.bottom + 'px';
-        currentPlayerToken.style.right = posCalculated.right + 'px';
+            this.cell.appendChild(playerToken);
+            this.board!.appendChild(this.cell);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
       }
 
       if (casillaJugador[i].player === 'player2') {
         const pos = casillaJugador[i].pos;
         const playerClass = casillaJugador[i].player + '-token'; // Clase dinámica
-        const initialPosition = { bottom: 15, right: 25 };
-        this.calculatePosition(pos, initialPosition);
 
-        const posCalculated = this.calculatePosition(pos, initialPosition);
+        const posCalculated = this.calculatePosition('player2', pos)
+          .then((position) => {
+            const playerToken = document.createElement('div');
+            playerToken.classList.add('player-token', playerClass);
+            playerToken.style.backgroundColor = 'green';
+            // Actualiza la posición de la ficha del jugador
+            playerToken.style.bottom = position.bottom + 'px';
+            playerToken.style.right = position.right + 'px';
 
-        let currentPlayerToken = document.querySelector(
-          '.' + playerClass
-        ) as HTMLElement; // Asegúrate de que es un HTMLElement
-        const board = document.getElementById('board');
-
-        if (!currentPlayerToken) {
-          currentPlayerToken = document.createElement('div');
-          currentPlayerToken.classList.add('player-token', playerClass);
-          currentPlayerToken.style.backgroundColor = 'blue';
-          board!.appendChild(currentPlayerToken);
-        }
-
-        // Actualiza la posición de la ficha del jugador
-        currentPlayerToken.style.bottom = posCalculated.bottom + 'px';
-        currentPlayerToken.style.right = posCalculated.right + 'px';
+            this.cell.appendChild(playerToken);
+            this.board!.appendChild(this.cell);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
       }
 
       if (casillaJugador[i].player === 'player3') {
         const pos = casillaJugador[i].pos;
         const playerClass = casillaJugador[i].player + '-token'; // Clase dinámica
-        const initialPosition = { bottom: 15, right: 80 };
-        this.calculatePosition(pos, initialPosition);
 
-        const posCalculated = this.calculatePosition(pos, initialPosition);
+        const posCalculated = this.calculatePosition('player3', pos)
+          .then((position) => {
+            const playerToken = document.createElement('div');
+            playerToken.classList.add('player-token', playerClass);
+            playerToken.style.backgroundColor = 'red';
+            // Actualiza la posición de la ficha del jugador
+            playerToken.style.bottom = position.bottom + 'px';
+            playerToken.style.right = position.right + 'px';
 
-        let currentPlayerToken = document.querySelector(
-          '.' + playerClass
-        ) as HTMLElement; // Asegúrate de que es un HTMLElement
-        const board = document.getElementById('board');
-
-        if (!currentPlayerToken) {
-          currentPlayerToken = document.createElement('div');
-          currentPlayerToken.classList.add('player-token', playerClass);
-          currentPlayerToken.style.backgroundColor = 'blue';
-          board!.appendChild(currentPlayerToken);
-        }
-
-        // Actualiza la posición de la ficha del jugador
-        currentPlayerToken.style.bottom = posCalculated.bottom + 'px';
-        currentPlayerToken.style.right = posCalculated.right + 'px';
+          this.cell.appendChild(playerToken);
+          this.board!.appendChild(this.cell);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
       }
 
       if (casillaJugador[i].player === 'player4') {
         const pos = casillaJugador[i].pos;
         const playerClass = casillaJugador[i].player + '-token'; // Clase dinámica
-        const initialPosition = { bottom: 55, right: 25 };
-        this.calculatePosition(pos, initialPosition);
 
-        const posCalculated = this.calculatePosition(pos, initialPosition);
+        const posCalculated = this.calculatePosition('player4', pos)
+          .then((position) => {
+            const playerToken = document.createElement('div');
+            playerToken.classList.add('player-token', playerClass);
+            playerToken.style.backgroundColor = 'yellow';
+            // Actualiza la posición de la ficha del jugador
+            playerToken.style.bottom = position.bottom + 'px';
+            playerToken.style.right = position.right + 'px';
 
-        let currentPlayerToken = document.querySelector(
-          '.' + playerClass
-        ) as HTMLElement; // Asegúrate de que es un HTMLElement
-        const board = document.getElementById('board');
-
-        if (!currentPlayerToken) {
-          currentPlayerToken = document.createElement('div');
-          currentPlayerToken.classList.add('player-token', playerClass);
-          currentPlayerToken.style.backgroundColor = 'blue';
-          board!.appendChild(currentPlayerToken);
-        }
-
-        // Actualiza la posición de la ficha del jugador
-        currentPlayerToken.style.bottom = posCalculated.bottom + 'px';
-        currentPlayerToken.style.right = posCalculated.right + 'px';
+            this.cell.appendChild(playerToken);
+            this.board!.appendChild(this.cell);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
       }
-    }
+    } */
   }
 
+  /* Pasar los datos de las coordenadas al numero correspondiente de casilla */
   calculatePosition(
-    squareNumber: number,
-    position: { bottom: number; right: number }
-  ): { bottom: number; right: number } {
-    // Aquí iría la lógica para calcular la posición
-
-    const stepsY = 110; // 100 de altura de casilla + 10 de margen
-    const stepsX = 135; // 125 de ancho de casilla + 10 de margen
-
-    // Asignamos el valor inicial para 'bottom' y 'right' basado en la salida del tablero
-    const startPosition = { bottom: position.bottom, right: position.right };
-
-    // Calcula la posición en base al número de casilla
-    if (squareNumber >= 1 && squareNumber <= 5) {
-      // Se mueve hacia arriba
-      position.bottom = startPosition.bottom + (squareNumber - 1) * stepsY;
-      position.right = startPosition.right;
-    } else if (squareNumber >= 6 && squareNumber <= 10) {
-      // Se mueve hacia la derecha
-      position.bottom = startPosition.bottom + 4 * stepsY; // La última posición hacia arriba
-      position.right = startPosition.right + (squareNumber - 6) * stepsX;
-    } else if (squareNumber >= 11 && squareNumber <= 15) {
-      // Se mueve hacia abajo
-      position.bottom =
-        startPosition.bottom + (4 - (squareNumber - 11)) * stepsY;
-      position.right = startPosition.right + 4 * stepsX; // La última posición hacia la derecha
-    } else if (squareNumber >= 16 && squareNumber <= 18) {
-      // Se mueve hacia la izquierda
-      position.bottom = startPosition.bottom;
-      position.right = startPosition.right + (4 - (squareNumber - 16)) * stepsX;
-    } else if (squareNumber >= 19 && squareNumber <= 21) {
-      // Se mueve hacia arriba otra vez
-      position.bottom = startPosition.bottom + (squareNumber - 18) * stepsY;
-      position.right = startPosition.right; // La última posición hacia la izquierda
-    }
-
-    console.log(position);
-
-    return position;
+    player: string,
+    casilla: number
+  ): Promise<{ bottom: number; right: number }> {
+    return new Promise((resolve, reject) => {
+      this.apiService.getPlayerData().subscribe(
+        (data) => {
+          let position;
+          switch (player) {
+            case 'player1':
+              position = {
+                bottom: data.player1[casilla].bottom,
+                right: data.player1[casilla].right,
+              };
+              break;
+            case 'player2':
+              position = {
+                bottom: data.player2[casilla].bottom,
+                right: data.player2[casilla].right,
+              };
+              break;
+            case 'player3':
+              position = {
+                bottom: data.player3[casilla].bottom,
+                right: data.player3[casilla].right,
+              };
+              break;
+            case 'player4':
+              position = {
+                bottom: data.player4[casilla].bottom,
+                right: data.player4[casilla].right,
+              };
+              break;
+            default:
+              position = { bottom: 0, right: 0 };
+              break;
+          }
+          resolve(position);
+        },
+        (error) => {
+          reject(error);
+        }
+      );
+    });
   }
 }

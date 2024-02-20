@@ -1,0 +1,282 @@
+{
+  "player1": {
+    "1": {
+      "bottom": 55,
+      "right": 80
+    },
+    "2": {
+      "bottom": 165,
+      "right": 80
+    },
+    "3": {
+      "bottom": 275,
+      "right": 80
+    },
+    "4": {
+      "bottom": 385,
+      "right": 80
+    },
+    "5": {
+      "bottom": 495,
+      "right": 80
+    },
+    "6": {
+      "bottom": 495,
+      "right": -55
+    },
+    "7": {
+      "bottom": 495,
+      "right": -190
+    },
+    "8": {
+      "bottom": 495,
+      "right": -325
+    },
+    "9": {
+      "bottom": 495,
+      "right": -460
+    },
+    "10": {
+      "bottom": 385,
+      "right": -460
+    },
+    "11": {
+      "bottom": 275,
+      "right": -460
+    },
+    "12": {
+      "bottom": 165,
+      "right": -460
+    },
+    "13": {
+      "bottom": 55,
+      "right": -460
+    },
+    "14": {
+      "bottom": 55,
+      "right": -325
+    },
+    "15": {
+      "bottom": 55,
+      "right": -190
+    },
+    "16": {
+      "bottom": 165,
+      "right": -190
+    },
+    "17": {
+      "bottom": 275,
+      "right": -190
+    }
+  },
+  "player2": {
+    "1": {
+      "bottom": 15,
+      "right": 25
+    },
+    "2": {
+      "bottom": 125,
+      "right": 25
+    },
+    "3": {
+      "bottom": 235,
+      "right": 25
+    },
+    "4": {
+      "bottom": 345,
+      "right": 25
+    },
+    "5": {
+      "bottom": 455,
+      "right": 25
+    },
+    "6": {
+      "bottom": 455,
+      "right": -110
+    },
+    "7": {
+      "bottom": 455,
+      "right": -245
+    },
+    "8": {
+      "bottom": 455,
+      "right": -380
+    },
+    "9": {
+      "bottom": 455,
+      "right": -515
+    },
+    "10": {
+      "bottom": 345,
+      "right": -515
+    },
+    "11": {
+      "bottom": 235,
+      "right": -515
+    },
+    "12": {
+      "bottom": 125,
+      "right": -515
+    },
+    "13": {
+      "bottom": 15,
+      "right": -515
+    },
+    "14": {
+      "bottom": 15,
+      "right": -380
+    },
+    "15": {
+      "bottom": 15,
+      "right": -245
+    },
+    "16": {
+      "bottom": 125,
+      "right": -245
+    },
+    "17": {
+      "bottom": 235,
+      "right": -245
+    }
+  },
+  "player3": {
+    "1": {
+      "bottom": 15,
+      "right": 80
+    },
+    "2": {
+      "bottom": 125,
+      "right": 80
+    },
+    "3": {
+      "bottom": 235,
+      "right": 80
+    },
+    "4": {
+      "bottom": 345,
+      "right": 80
+    },
+    "5": {
+      "bottom": 455,
+      "right": 80
+    },
+    "6": {
+      "bottom": 455,
+      "right": -55
+    },
+    "7": {
+      "bottom": 455,
+      "right": -190
+    },
+    "8": {
+      "bottom": 455,
+      "right": -325
+    },
+    "9": {
+      "bottom": 455,
+      "right": -460
+    },
+    "10": {
+      "bottom": 345,
+      "right": -460
+    },
+    "11": {
+      "bottom": 235,
+      "right": -460
+    },
+    "12": {
+      "bottom": 125,
+      "right": -460
+    },
+    "13": {
+      "bottom": 15,
+      "right": -460
+    },
+    "14": {
+      "bottom": 15,
+      "right": -325
+    },
+    "15": {
+      "bottom": 15,
+      "right": -190
+    },
+    "16": {
+      "bottom": 125,
+      "right": -190
+    },
+    "17": {
+      "bottom": 235,
+      "right": -190
+    }
+  },
+  "player4": {
+    "1": {
+      "bottom": 55,
+      "right": 25
+    },
+    "2": {
+      "bottom": 165,
+      "right": 25
+    },
+    "3": {
+      "bottom": 275,
+      "right": 25
+    },
+    "4": {
+      "bottom": 385,
+      "right": 25
+    },
+    "5": {
+      "bottom": 495,
+      "right": 25
+    },
+    "6": {
+      "bottom": 495,
+      "right": -110
+    },
+    "7": {
+      "bottom":495,
+      "right": -245
+    },
+    "8": {
+      "bottom": 495,
+      "right": -380
+    },
+    "9": {
+      "bottom": 495,
+      "right": -515
+    },
+    "10": {
+      "bottom": 385,
+      "right": -515
+    },
+    "11": {
+      "bottom": 275,
+      "right": -515
+    },
+    "12": {
+      "bottom": 165,
+      "right": -515
+    },
+    "13": {
+      "bottom": 55,
+      "right": -515
+    },
+    "14": {
+      "bottom": 55,
+      "right": -380
+    },
+    "15": {
+      "bottom": 55,
+      "right": -245
+    },
+    "16": {
+      "bottom": 165,
+      "right": -245
+    },
+    "17": {
+      "bottom": 275,
+      "right": -245
+    }
+  }
+}

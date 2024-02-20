@@ -78,10 +78,17 @@ export class ApiServiceService {
             player2: response.Player_2,
             player3: response.Player_3,
             player4: response.Player_4,
+            
+            casillaPlayer1:response.casillaPlayer1,
+            casillaPlayer2:response.casillaPlayer2,
+            casillaPlayer3:response.casillaPlayer3,
+            casillaPlayer4:response.casillaPlayer4,
           };
           this.statusBoardSubject.next(statusInfo);
         }),
         catchError((error: HttpErrorResponse) => {
+          console.log(error);
+          
           return throwError(() => new Error('Datos incorrectos'));
         })
       );
@@ -203,9 +210,6 @@ export class ApiServiceService {
   }
 
   /* COMPROBAR MOVIMIENTO */
-  /* POST http://localhost:8090/api/v1/checkMovement/NORMAL/player/joselu/table/1  HTTP/1.1
- */
-
   checkMovement(
     type: string,
     nickname: string,
@@ -224,13 +228,15 @@ export class ApiServiceService {
         }
       )
       .pipe(
-        tap((response) => {                    
-          console.log(response);
-          
-        }),
         catchError((error: HttpErrorResponse) => {
           return throwError(() => new Error('Datos incorrectos'));
         })
       );
+  }
+
+  /* ACCEDER AL JSON DE COORDENADAS ALMACENADO LOCALMENTE */
+  private dataUrl: string = 'assets/data/players.json';
+  getPlayerData(): Observable<any> {
+    return this.http.get(this.dataUrl);
   }
 }

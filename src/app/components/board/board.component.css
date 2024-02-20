@@ -99,6 +99,7 @@
 }
 
 .pregunta-content-item {
+  cursor: pointer;
   text-align: center;
   font-weight: 600;
   font-size: 23px;
@@ -120,8 +121,6 @@
   height: 220px;
   padding: 20px;
 }
-
-.joselu-token {}
 
 .pregunta-footer-item {
   text-align: center;
@@ -281,7 +280,6 @@ button {
 #board{position: relative;}
 
 .cell {
-  background-size: cover;
   background-image: url('https://i.postimg.cc/Y2Z0tTDc/wood-texture-141-2614619329.jpg');
   font-family: "Barriecito", system-ui;
   font-style: normal;
@@ -296,6 +294,11 @@ button {
   color: red;
   text-shadow: 1px 1px 2px black;
   text-align: center;
+}
+
+.cellLoaded{
+  position: relative;
+  transform: translate(-2px, -12px);
 }
 
 .cell:nth-of-type(21) {
