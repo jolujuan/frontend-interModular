@@ -212,8 +212,28 @@
   font-size: 20px;
 }
 
-button {
+/*button {
   padding: 10px;
+}*/
+/* NOU ASPECTE BUTTON */
+button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase;
+  border: 2px solid #fff; 
+  border-radius: 5px;
+  background-color: #594024; 
+  color: #fff; 
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: #C19A6B; 
+  border-color: #FFAE42; 
+  color: #000; 
 }
 
 .card-1 {
