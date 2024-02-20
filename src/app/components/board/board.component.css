@@ -1,39 +1,389 @@
-.container-main {
+@media only  screen and (max-width: 920px) and (orientation: landscape) {
+  .container-main {
+    transform: scale(0.6) translate(-39%,-30%);
+    height: 150vh;
+    background-color: azure;
+    margin: 0;
+  }
+  .main{
+    background-color: #FFAE42;
+  
+  }
+}
+
+
+.pregunta {
+  font-weight: 900;
+
+  color: white;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  border: 2px solid black;
+  border-radius: 25px;
   background: linear-gradient(135deg, #172a74, #21a9af);
-  height: 60em;
-  padding: 20px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 10px;
+  /* height: 450px; */
+  height: 536px;
+  width: 650px;
+  margin: 0 auto;
+}
+
+.pregunta-header {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: 1fr 150px 1fr;
+  height: 100px;
+}
+
+.pregunta-header-item {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: center;
 }
 
-.board {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  grid-auto-rows: 80px;
-  gap: 5px;
-  width: 100%;
+.btn {
+  font-size: 20px;
+  font-weight: 900;
+  background-color: white;
+  color: black;
+  border: 1px solid white;
 }
-.cell {
+
+.btn:hover {
+  border: 1px solid white;
+}
+
+
+.pregunta-header-uno {
+  grid-column: 1;
+
+  margin-bottom: 20px;
+  /* para sin tiempo */
+
+}
+
+.pregunta-header-dos {
+  font-size: 35px;
+  text-decoration: underline;
+  grid-column: 2;
+}
+
+.pregunta-header-tres {
+  grid-column: 3;
+}
+
+.tiempo {
+  background-color: transparent;
+  color: white;
+}
+
+
+.pregunta-main {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.pregunta-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  grid-column: 1;
+}
+
+.pregunta-content-item {
+  cursor: pointer;
+  text-align: center;
+  font-weight: 600;
+  font-size: 23px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  width: 80%;
+}
+
+
+.pregunta-footer {
+  font-weight: 600;
+  font-size: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 20px;
+  height: 220px;
+  padding: 20px;
+}
+
+.pregunta-footer-item {
+  text-align: center;
+  border-radius: 5px;
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pregunta-footer-item:hover {
+  background-color: white;
+  color: black;
   border: 1px solid black;
+  cursor: pointer;
+}
+
+.pregunta-footer-item.selected {
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+}
+
+
+.pregunta-footer-uno {
+  grid-row: 1;
+  grid-column: 1;
+}
+
+.pregunta-footer-dos {
+  grid-row: 2;
+  grid-column: 1;
+}
+
+.pregunta-footer-tres {
+  grid-row: 1;
+  grid-column: 2;
+}
+
+.pregunta-footer-cuatro {
+  grid-row: 2;
+  grid-column: 2;
+}
+
+
+
+
+
+
+
+.tablero {
+  position: relative;
+
+  background-color: #FFAE42;
+  display: grid;
+  place-items: center;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  padding: 60px;
+}
+
+.columna-1,
+.columna-3 {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 80%;
+}
+
+
+.fila {
+
+  border: 1px solid black;
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+  width: 180px;
+  font-weight: 900;
+  text-shadow: 1px 1px 2px black;
+  color: rgb(255, 255, 255);
+  text-align: center;
+  font-size: 25px;
+
+}
+
+.fila.button {
+  padding: 0px;
+  border: none;
+  font-size: 20px;
+}
+
+button {
+  padding: 10px;
+}
+
+.card-1 {
+  background-color: #708a51;
+
+  box-shadow: black 0px 0px 0px 1px inset,
+    #708a51 10px -10px 0px -3px,
+    black 10px -10px,
+    #708a51 20px -20px 0px -3px,
+    black 20px -20px,
+    0px 0px 5px rgba(0, 0, 0, 0.3);
+
+}
+
+.card-2 {
+  background-color: #df6b3c;
+
+  box-shadow: black 0px 0px 0px 1px inset,
+    #df6b3c 10px -10px 0px -3px,
+    black 10px -10px,
+    #df6b3c 20px -20px 0px -3px,
+    black 20px -20px,
+    0px 0px 5px rgba(0, 0, 0, 0.3);
+}
+
+.card-3 {
+  background-color: #01619c;
+
+  box-shadow: black 0px 0px 0px 1px inset,
+    #01619c 10px -10px 0px -3px,
+    black 10px -10px,
+    #01619c 20px -20px 0px -3px,
+    black 20px -20px,
+    0px 0px 5px rgba(0, 0, 0, 0.3);
+}
+
+.card-4 {
+  background-color: #922727;
+  padding: 27px;
+
+  box-shadow: black 0px 0px 0px 1px inset,
+    #922727 10px -10px 0px -3px,
+    black 10px -10px,
+    #922727 20px -20px 0px -3px,
+    black 20px -20px,
+    0px 0px 5px rgba(0, 0, 0, 0.3);
+}
+
+.container-game {
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4), 0px 7px 13px -3px rgba(0, 0, 0, 0.3), inset 0px -3px 0px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  display: grid;
+  grid-template-columns: repeat(5, 125px);
+  grid-template-rows: repeat(5, 98px);
+  gap: 10px;
+  padding: 50px;
+  position: static;
+  border: 2px solid black;
+  background: radial-gradient(circle, #fddb6d 0%, #f8972f 50%, #f5b82f 100%);
+  border-radius: 20%;
+
+}
+
+#board{position: relative;}
+
+.cell {
+  background-image: url('https://i.postimg.cc/Y2Z0tTDc/wood-texture-141-2614619329.jpg');
+  font-family: "Barriecito", system-ui;
+  font-style: normal;
+  font-weight: 900;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #c19a6b;
+  font-size: 1.1em;
+  border-radius: 20%;
+  border: 2px solid #a67c52;
+  position: relative;
+  color: red;
+  text-shadow: 1px 1px 2px black;
+  text-align: center;
 }
+
+.cellLoaded{
+  position: relative;
+  transform: translate(-2px, -12px);
+}
+
+.cell:nth-of-type(21) {
+  color: white;
+  font-size: 1.2em;
+}
+
+.cell:nth-of-type(13) {
+  grid-column: 3;
+  grid-row: 3;
+  background: none;
+  border: none;
+}
+
+.cell:nth-of-type(13) img {
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  position: absolute;
+  z-index: 0;
+  transform: translate(-25px, -12px);
+}
+
+.cell:nth-of-type(13)::before {
+  content: '';
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background-image: radial-gradient(closest-side, red 20%, #FFAE42 0, #FFAE42 40%, red 0, red 60%, #FFAE42 0, #FFAE42 80%, red 0);
+  box-shadow: 4px 4px var(1rem) rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+.cell:nth-of-type(13)::after {
+  content: "Llegada";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 1.2em;
+  z-index: 2;
+}
+
+.cell:nth-of-type(7),
 .cell:nth-of-type(8),
 .cell:nth-of-type(9),
-.cell:nth-of-type(10),
-.cell:nth-of-type(11),
+.cell:nth-of-type(12),
 .cell:nth-of-type(14),
-.cell:nth-of-type(15),
-.cell:nth-of-type(16),
 .cell:nth-of-type(17),
-.cell:nth-of-type(20),
-.cell:nth-of-type(21),
-.cell:nth-of-type(22),
-.cell:nth-of-type(23),
-.cell:nth-of-type(26) {
+.cell:nth-of-type(19),
+.cell:nth-of-type(22) {
   border: none;
   background: none;
 }
+
+.player-token {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  position: absolute;
+  z-index: 7;
+  transition: all 0.2s ease;
+}
+
+/* .joselu-token {
+  bottom: 55px;
+  right: 80px;
+  background-color: blue;
+}
+
+.player2-token {
+  bottom: 15px;
+  right: 25px;
+  background-color: green;
+}
+
+.player3-token {
+  bottom: 15px;
+  right: 80px;
+  background-color: red;
+}
+
+.player4-token {
+  bottom: 55px;
+  right: 25px;
+  background-color: yellow;
+} */

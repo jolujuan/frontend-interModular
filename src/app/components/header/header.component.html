@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary" id="navbar" style="padding: 0;">
-  <div class="div-logo" >
+  <div class="div-logo">
     <h1 class="logo me-auto"><a [routerLink]="['/home']">El <span>Burro</span></a></h1>
   </div>
   <div class="container-fluid" style="background-color: #1e242a;padding: 23px;">
@@ -14,7 +14,7 @@
         <a class="nav-link" [routerLink]="['/profile']" [routerLinkActive]="['active']">Profile</a>
         <li class="nav-item"><a class="nav-link">Team</a></li>
         @if (isLoggedUser) {
-          <li class="nav-item"><a class="nav-link">Estadisticas</a></li>
+        <li class="nav-item"><a class="nav-link">Estadisticas</a></li>
 
         }
       </ul>
@@ -35,9 +35,9 @@
     <a [routerLink]="['/userManagement/mode','login']" class="get-started-btn login">Log In</a>
     <a [routerLink]="['/userManagement/mode','register']" class="get-started-btn">Sign Up</a>
     }@else{
-    <a [routerLink]="['/userManagement/mode','logout']" class="get-started-btn login">Logout</a>
+    <a [routerLink]="['/userManagement/mode']" [queryParams]="{ setmode: 'logout'}"
+      class="get-started-btn login">Logout</a>
     <a [routerLink]="['/profile']" class="get-started-btn">Profile</a>
-
     }
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"

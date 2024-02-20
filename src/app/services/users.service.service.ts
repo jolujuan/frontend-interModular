@@ -90,19 +90,19 @@ export class UsersServiceService {
   localStorage(idToken: string, nickname: string) {
     const now = new Date();
     //Tiempo de expiración 3 horas
-    const expiration = now.getTime() + parseInt('10.800') * 1000;
+    const expiration = now.getTime() + parseInt('10800000 ') * 1000;
 
     const Token = {
       token: idToken,
       expiration: expiration,
     };
-    sessionStorage.setItem('idToken', JSON.stringify(Token));
-    sessionStorage.setItem('nickname', nickname);
+    localStorage.setItem('idToken', JSON.stringify(Token));
+    localStorage.setItem('nickname', nickname);
   }
 
   isLogged(): boolean {
     try {
-      const idToken = sessionStorage.getItem('idToken');
+      const idToken = localStorage.getItem('idToken');
       console.log(idToken);
       if (!idToken) return false;
 
@@ -113,7 +113,7 @@ export class UsersServiceService {
         //Comprueba si el token ha expirada
         return true;
       } else {
-        sessionStorage.removeItem('idToken');
+        localStorage.removeItem('idToken');
         return false;
       }
     } catch (e) {
@@ -166,7 +166,7 @@ export class UsersServiceService {
   } */
 
   /* getProfile(): void {
-    const uid = sessionStorage.getItem('uid');
+    const uid = localStorage.getItem('uid');
 
     let profilePromise: Promise<{ data: IUser[] }> = this.supaClient
       .from('profiles')

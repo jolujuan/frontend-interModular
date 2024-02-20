@@ -45,12 +45,12 @@ export class LoginComponent implements OnInit {
       if (setMode) {
         this.mode = setMode;
         if (setMode === 'logout') {
-          sessionStorage.clear();
-          this.router.navigate(['home']);
+          localStorage.clear();
+          this.router.navigate(['']);
         }
       }
 
-      //Para conectarse a una partida con idGame es necesario loguearse primero
+      //Para conectarse a una partida con idBoard es necesario loguearse primero
       if (setGame) this.game = setGame;
     });
   }
@@ -215,6 +215,7 @@ export class LoginComponent implements OnInit {
     }
     return false;
   }
+
   async register() {
     const name = this.formRegister.get('name')!.value;
     const nickname = this.formRegister.get('nickname')!.value;
@@ -223,7 +224,12 @@ export class LoginComponent implements OnInit {
 
     this.usersService.register(name, nickname, email, password).subscribe({
       next: (response) => {
-        this.showPopUp('register', 'userManagement/mode/login');
+        this.game
+          ? (this.showPopUp('register', ''),
+            this.router.navigate(['/userManagement/mode'], {
+              queryParams: { setmode: 'login', setgame: this.game },
+            }))
+          : this.showPopUp('register', 'userManagement/mode/login');
       },
       error: (error) => {
         this.errorLogin = error.message;
@@ -252,7 +258,9 @@ export class LoginComponent implements OnInit {
     this.divPopUp!.nativeElement.appendChild(this.popupService.popup(type));
     this.popupService.showPopup();
     this.popupService.onClosePopup.subscribe(() => {
-      this.router.navigate([ruta]);
+      if (!this.game) {//Ejecutar solamente si no ha pasado id game
+        this.router.navigate([ruta]);
+      }
     });
   }
 }

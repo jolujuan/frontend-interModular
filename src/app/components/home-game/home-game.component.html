@@ -1,12 +1,13 @@
 <app-header></app-header>
+<div #divPopUp></div>
 
 <div class="container-main">
   <div class="container-partida">
     <div class="cont">
       <h3>ID GAME</h3>
-      <button class="btn" (click)="copiarAlPortapapeles('idGame')">
+      <button class="btn" (click)="copiarAlPortapapeles('idBoard')">
         <b
-          ><span id="idGame" class="btn-id">{{ idGame }} </span></b
+          ><span id="idBoard" class="btn-id">{{ idBoard }} </span></b
         > <i class="bi bi-copy"></i><!--<a href="https://wa.me/?text=URL_A_COMPARTIR" class="btn-share">
           Share<i class="bi bi-send" style="margin-left: 5px"></i>
         </a> -->
@@ -16,7 +17,11 @@
 
     <div class="cont">
       <h3 style="margin-bottom: 25px">
-        Esperando jugadores @if (!playGlobal) { <span class="loader"></span>
+        @if (!playGlobal){
+          Esperando jugadores <span class="loaderPunt">...</span>
+      
+        }@else {
+            ¡Jugadores listos!
         }
       </h3>
 
