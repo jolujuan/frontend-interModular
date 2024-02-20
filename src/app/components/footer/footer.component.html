@@ -5,10 +5,16 @@
         <div class="footer-top">
             <div class="col-md-12 text-center">
                 <p class="menu">
+                    @if (!isLoggedUser) {
+
                     <a [routerLink]="['/home']">Home</a>
                     <a [routerLink]="['/profile']">Profile</a>
                     <a>Team</a>
-                
+                    }@else {
+                    <a [routerLink]="['/home']">Nueva</a>
+                    <a [routerLink]="['/profile']">Profile</a>
+                    <a>Team</a>
+                    }
                 </p>
                 <ul class="ftco-footer-social p-0">
                     <ul class="ftco-footer-social p-0">
@@ -37,9 +43,11 @@
         </div>
 
         <div class="footer-med">
-            <p>ficar una descripcio del proyecyeficar una descripcio del proyecyeficar una descripcio del proyecyeficar
-                una descripcio del proyecyeficar una descripcio del proyecyeficar una descripcio del proyecyeficar una
-                descripcio del proyecye</p>
+            <p>Este juego, diseñado como proyecto intermodular final para la clase de 2º de DAW del Instituto Simarro,
+                combina estrategia, conocimiento y diversión en un tablero interactivo donde los jugadores avanzan
+                respondiendo preguntas de múltiples categorías. Desarrollado con tecnologías web modernas, promueve el
+                aprendizaje colaborativo y la competencia sana entre compañeros. ¡Sumérgete en esta aventura educativa y
+                demuestra tus habilidades de conocimiento y estrategia!</p>
         </div>
     </div>
 

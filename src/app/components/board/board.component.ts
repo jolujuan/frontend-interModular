@@ -137,9 +137,9 @@ export class BoardComponent implements OnInit, OnDestroy {
               //Cargar la posicion de todas las fichas
               this.loadPosition(casillaJugador);
 
-              if (!this.metodoEjecutado)//Ocultar boton movimiento si esta en pregunta
+               if (!this.metodoEjecutado)//Ocultar boton movimiento si esta en pregunta
                 this.isButtonDisabled =
-                  storedNickname !== this.currentPlayerBase;
+                  storedNickname !== this.currentPlayerBase; 
             },
           });
         };
@@ -415,7 +415,7 @@ export class BoardComponent implements OnInit, OnDestroy {
   //Mover solo el jugador en el DOM y guardar el movimiento en la base
   rollExtra() {
     const resultElement = document.getElementById('diceResultColor');
-    const diceResult = Math.ceil(Math.random() * 2);
+    const diceResult = Math.ceil(Math.random() * 3);
     resultElement!.textContent = `Resultado del dado: ${diceResult}`;
 
     this.doMovementExtra(diceResult, this.currentPlayerBase, () => {
@@ -428,7 +428,7 @@ export class BoardComponent implements OnInit, OnDestroy {
 
   rollNum() {
     const resultElement = document.getElementById('diceResult');
-    const diceResult = Math.ceil(Math.random() * 1);
+    const diceResult = Math.ceil(Math.random() * 2);
     resultElement!.textContent = `Resultado del dado: ${diceResult}`;
 
     this.doMovement(diceResult, this.currentPlayerBase, () => {

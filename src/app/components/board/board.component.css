@@ -1,13 +1,14 @@
-@media only  screen and (max-width: 920px) and (orientation: landscape) {
+@media only screen and (max-width: 920px) and (orientation: landscape) {
   .container-main {
-    transform: scale(0.6) translate(-39%,-30%);
+    transform: scale(0.6) translate(-39%, -30%);
     height: 150vh;
     background-color: azure;
     margin: 0;
   }
-  .main{
+
+  .main {
     background-color: #FFAE42;
-  
+
   }
 }
 
@@ -89,6 +90,16 @@
   grid-template-rows: 1fr;
   grid-template-columns: 1fr;
   gap: 10px;
+}
+
+.incorrecta {
+  color: white;
+  font-weight: 700;
+  font-size: 36px;
+  /* text-decoration: underline; */
+  font-style: italic;
+  /* box-shadow: 0px 0px 10px 3px #fff; */
+  box-shadow: 0px 0px 9px 3px #fff, inset 0px 0px 12px 0px rgb(15 10 10 / 50%);
 }
 
 .pregunta-content {
@@ -222,18 +233,32 @@ button {
   font-size: 18px;
   font-weight: bold;
   text-transform: uppercase;
-  border: 2px solid #fff; 
+  border: 2px solid #fff;
   border-radius: 5px;
-  background-color: #594024; 
-  color: #fff; 
+  background-color: #594024;
+  color: #fff;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 button:hover {
-  background-color: #C19A6B; 
-  border-color: #FFAE42; 
-  color: #000; 
+  background-color: #C19A6B;
+  border-color: #FFAE42;
+  color: #000;
+}
+
+button:disabled:hover {
+  background-color: #594024;
+  content: "Espere turno";
+  color: white;
+  border: 1px solid white;
+}
+
+button:disabled::after {
+  content: "Espere turno";
+  color: black;
+  background-color: white;
+  padding: 2px;
 }
 
 .card-1 {
@@ -293,11 +318,13 @@ button:hover {
   position: static;
   border: 2px solid black;
   background: radial-gradient(circle, #fddb6d 0%, #f8972f 50%, #f5b82f 100%);
-  border-radius: 20%;
+  border-radius: 15%;
 
 }
 
-#board{position: relative;}
+#board {
+  position: relative;
+}
 
 .cell {
   background-image: url('https://i.postimg.cc/Y2Z0tTDc/wood-texture-141-2614619329.jpg');
@@ -316,7 +343,7 @@ button:hover {
   text-align: center;
 }
 
-.cellLoaded{
+.cellLoaded {
   position: relative;
   transform: translate(-2px, -12px);
 }
