@@ -1,6 +1,6 @@
 # ¿QUIÉN ES EL MÁS BURRO?
 
-![burro](https://i.postimg.cc/C5snLSjV/ezgif-4-9e20bbbd9e.gif) 
+![burro](https://i.postimg.cc/C5snLSjV/ezgif-4-9e20bbbd9e.gif)
 
 
 _Este proyecto desarrollado como proyecto intermodular final para la clase de 2º de DAW del Instituto Simarro, es un juego educativo interactivo destinado a fomentar el aprendizaje a través del juego. Utilizando tecnologías como Angular para el frontend y Spring Boot para el backend, el juego ofrece una experiencia dinámica y educativa. Los jugadores pueden registrarse, iniciar sesión y competir respondiendo preguntas de múltiples categorías para avanzar en el tablero, todo ello gestionado por una base de datos MySQL._
