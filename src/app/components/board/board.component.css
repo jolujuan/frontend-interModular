@@ -1,7 +1,6 @@
 @media only screen and (max-width: 920px) and (orientation: landscape) {
   .container-main {
-    transform: scale(0.6) translate(-39%, -30%);
-    height: 150vh;
+    transform: scale(0.5) translate(-48%, -30%);    height: 150vh;
     background-color: azure;
     margin: 0;
   }
@@ -10,8 +9,36 @@
     background-color: #FFAE42;
 
   }
+
+
+  .mostrarJugador{
+    width: 170%;
+  }
 }
 
+.mostrarJugador{
+  background-color: #f8972f;
+  padding: 25px;
+  font-weight: 700;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.player-tokenMostrar {
+  margin-right: 125px;
+
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin: 0 40px; 
+}
 
 .pregunta {
   font-weight: 900;

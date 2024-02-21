@@ -16,6 +16,16 @@ export class HeaderComponent {
   filter: string = '';
   isLoggedUser: boolean = false;
 
+  mostrar: boolean = false;
+
+  mostrarInstrucciones() {
+    this.mostrar = true;
+  }
+
+  ocultarInstrucciones() {
+    this.mostrar = false;
+  }
+
   constructor(private usersService: UsersServiceService) {
     this.isLoggedUser = this.usersService.isLogged();
 

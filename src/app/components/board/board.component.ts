@@ -137,9 +137,10 @@ export class BoardComponent implements OnInit, OnDestroy {
               //Cargar la posicion de todas las fichas
               this.loadPosition(casillaJugador);
 
-               if (!this.metodoEjecutado)//Ocultar boton movimiento si esta en pregunta
+              if (!this.metodoEjecutado)
+                //Ocultar boton movimiento si esta en pregunta
                 this.isButtonDisabled =
-                  storedNickname !== this.currentPlayerBase; 
+                  storedNickname !== this.currentPlayerBase;
             },
           });
         };
@@ -151,9 +152,9 @@ export class BoardComponent implements OnInit, OnDestroy {
   metodoEjecutado: boolean = false;
   getQuestions(category: string) {
     this.metodoEjecutado = true;
-     //Mostrar la pregunta y deshabilitar botones
-     this.isButtonDisabled = true;
-     this.isButtonDisabledExtra = true;
+    //Mostrar la pregunta y deshabilitar botones
+    this.isButtonDisabled = true;
+    this.isButtonDisabledExtra = true;
     if (this.idBoard != null || this.idBoard != undefined) {
       const { storedNickname, storedToken } = this.getStoredUserData();
       if (storedNickname && storedToken) {
@@ -175,7 +176,6 @@ export class BoardComponent implements OnInit, OnDestroy {
           '0.5';
         this.categoyQuestion = category;
         this.showQuestion = true;
-
       }
     }
   }
@@ -214,10 +214,9 @@ export class BoardComponent implements OnInit, OnDestroy {
                   this.isButtonDisabled = true;
                   this.isButtonDisabledExtra = false;
                   this.showQuestion = false; //Ocultar pregunta
-                  this.metodoEjecutado=true;
-
+                  this.metodoEjecutado = true;
                 } else {
-                  this.metodoEjecutado=false;
+                  this.metodoEjecutado = false;
                   this.isButtonDisabledExtra = true;
                   this.isButtonDisabled = false;
                   this.correctAnswer = false;
@@ -247,24 +246,16 @@ export class BoardComponent implements OnInit, OnDestroy {
           .subscribe({
             next: async (response) => {
               if (response.TipoCasilla === 'BONIFICACION') {
-                const currentPlayerToken = document.querySelector(
-                  `.${player}-token`
-                );
-
                 //Mover el jugador
-                this.moveTokenRecursively(currentPlayerToken, diceResult, 0);
                 this.isButtonDisabled = true; //Deshabilitar el boton normal
 
                 //Mostrar pregunta, llamar a recuperar respuestas y enviar
                 setTimeout(() => {
                   this.rollColor();
                 }, 2000);
-              } else if (response.TipoCasilla === 'NORMAL') {
-                const currentPlayerToken = document.querySelector(
-                  `.${player}-token`
-                );
-                this.moveTokenRecursively(currentPlayerToken, diceResult, 0);
               }
+
+              console.log(response.TipoCasilla);
 
               if (
                 response.TipoCasilla != 'NOT_YOUR_TURN' &&
@@ -272,6 +263,10 @@ export class BoardComponent implements OnInit, OnDestroy {
               ) {
                 //No cambiar el turno si se ha pasado o es una pregunta
                 let tipoCasilla = response.tipoCasilla;
+
+                if (response.TipoCasilla==='RETROCESO') {
+                    tipoCasilla='RETROCEDE';
+                }
 
                 this.apiService
                   .checkMovement(tipoCasilla, player, this.idBoard, token.token)
@@ -304,12 +299,12 @@ export class BoardComponent implements OnInit, OnDestroy {
           .doMovement(player, diceResult, this.idBoard, token.token)
           .subscribe({
             next: (response) => {
-              const currentPlayerToken = document.querySelector(
+              /* const currentPlayerToken = document.querySelector(
                 `.${player}-token`
-              );
-              this.moveTokenRecursively(currentPlayerToken, diceResult, 0);
+              ); */
+              /* this.moveTokenRecursively(currentPlayerToken, diceResult, 0); */
               //this.isButtonDisabled = false; //Activar de nuevo el boton para lanzar
-              this.metodoEjecutado=false;
+              this.metodoEjecutado = false;
               //Cambiar el turno si es correcta la pregunta
               this.apiService
                 .checkMovement(
@@ -428,7 +423,7 @@ export class BoardComponent implements OnInit, OnDestroy {
 
   rollNum() {
     const resultElement = document.getElementById('diceResult');
-    const diceResult = Math.ceil(Math.random() * 2);
+    const diceResult = Math.ceil(Math.random() * 4);
     resultElement!.textContent = `Resultado del dado: ${diceResult}`;
 
     this.doMovement(diceResult, this.currentPlayerBase, () => {
@@ -466,7 +461,104 @@ export class BoardComponent implements OnInit, OnDestroy {
     this.getQuestions(category); //Empezar a obtener las preguntas
   }
 
-  moveTokenRecursively(token: any, diceResult: number, contadorTurno: number) {
+  checkWinner(pos: number, player: string) {
+    // Verifica si la posición actual supera el límite para ganar
+    if (pos >= 17) {
+      let playerName = ''; // Nombre del jugador que gana
+      if (player === 'player1') playerName = this.players[0];
+      if (player === 'player2') playerName = this.players[1];
+      if (player === 'player3') playerName = this.players[2];
+      if (player === 'player4') playerName = this.players[3];
+
+      alert(`¡El Jugador ${playerName} ha ganado!`);
+    }
+  }
+
+  /* METODO PARA CARGAR LAS POSICIONES */
+  loadPosition(casillaJugador: { player: string; pos: number }[]) {
+    //Pasamos el jugador para reconocerlo y leerlo del array
+    //guardando a su vez la clase para cambiar sus propiedes
+    //son cambiadas desde el metodo que calculatePosition y lo recoje de un json
+    casillaJugador.forEach(({ player, pos }) => {
+      this.calculatePosition(player, pos)
+        .then(({ bottom, right }) => {
+          let playerClass = '';
+
+          if (player === 'player1') {
+            playerClass = this.players[0] + '-token';
+          }
+          if (player === 'player2') {
+            playerClass = this.players[1] + '-token';
+          }
+          if (player === 'player3') {
+            playerClass = this.players[2] + '-token';
+          }
+          if (player === 'player4') {
+            playerClass = this.players[3] + '-token';
+          }
+
+          const playerTokens = document.querySelectorAll(`.${playerClass}`);
+          playerTokens.forEach((token) => {
+            if (token instanceof HTMLElement) {
+              token.style.bottom = `${bottom}px`;
+              token.style.right = `${right}px`;
+              token.style.color = 'black;';
+            }
+          });
+          //this.checkWinner(pos, player);
+        })
+        .catch((error) => console.error(error));
+    });
+  }
+
+  /* Pasar los datos de las coordenadas al numero correspondiente de casilla */
+  calculatePosition(
+    player: string,
+    casilla: number
+  ): Promise<{ bottom: number; right: number }> {
+    return new Promise((resolve, reject) => {
+      this.apiService.getPlayerData().subscribe(
+        (data) => {
+          let position;
+          switch (player) {
+            case 'player1':
+              position = {
+                bottom: data.player1[casilla].bottom,
+                right: data.player1[casilla].right,
+              };
+              break;
+            case 'player2':
+              position = {
+                bottom: data.player2[casilla].bottom,
+                right: data.player2[casilla].right,
+              };
+              break;
+            case 'player3':
+              position = {
+                bottom: data.player3[casilla].bottom,
+                right: data.player3[casilla].right,
+              };
+              break;
+            case 'player4':
+              position = {
+                bottom: data.player4[casilla].bottom,
+                right: data.player4[casilla].right,
+              };
+              break;
+            default:
+              position = { bottom: 0, right: 0 };
+              break;
+          }
+          resolve(position);
+        },
+        (error) => {
+          reject(error);
+        }
+      );
+    });
+  }
+
+  /* moveTokenRecursively(token: any, diceResult: number, contadorTurno: number) {
     const currentPositionBottom = parseInt(
       window
         .getComputedStyle(token)
@@ -625,17 +717,12 @@ export class BoardComponent implements OnInit, OnDestroy {
         this.moveTokenRecursively(token, diceResult, contadorTurno);
       }, 500);
     }
-    if (
-      this.contador1 == 17 ||
-      this.contador2 == 17 ||
-      this.contador3 == 17 ||
-      this.contador4 == 17
-    ) {
-      this.checkWinner();
-    }
-  }
+    console.log(this.contador1);
+    
+   
+  } */
 
-  verifyBurroSabelotodo() {
+  /* verifyBurroSabelotodo() {
     const burroSabelotodoIndices = this.numbers.reduce((acc, val, i) => {
       if (val === 'Burro Sabelotodo') {
         acc.push(i);
@@ -655,12 +742,11 @@ export class BoardComponent implements OnInit, OnDestroy {
         console.log(
           `¡El jugador ${this.players[index]} ha caído en la casilla "Burro Sabelotodo"!`
         );
-        // Realizar acciones específicas para cuando caen en "Burro Sabelotodo"
       }
     });
-  }
+  } */
 
-  back7TokenRecursively(token: any, diceResult: number, contadorBack: number) {
+  /* back7TokenRecursively(token: any, diceResult: number, contadorBack: number) {
     const currentPositionBottom = parseInt(
       window
         .getComputedStyle(token)
@@ -774,67 +860,9 @@ export class BoardComponent implements OnInit, OnDestroy {
   disableRollDiceButton() {
     const rollDiceButton = document.querySelector('button');
     rollDiceButton!.disabled = true;
-  }
+  } */
 
-  checkWinner() {
-    if (this.contador2 >= 17) {
-      alert(`¡El Jugador ${this.players[1]} ha ganado!`);
-      this.disableRollDiceButton();
-      return;
-    }
-    if (this.contador1 >= 17) {
-      alert(`¡El Jugador ${this.players[0]} ha ganado!`);
-      this.disableRollDiceButton();
-      return;
-    }
-    if (this.contador3 >= 17) {
-      alert(`¡El Jugador ${this.players[2]} ha ganado!`);
-      this.disableRollDiceButton();
-      return;
-    }
-    if (this.contador4 >= 17) {
-      alert(`¡El Jugador ${this.players[3]} ha ganado!`);
-      this.disableRollDiceButton();
-      return;
-    }
-  }
-
-  /* METODO PARA CARGAR LAS POSICIONES */
-  loadPosition(casillaJugador: { player: string; pos: number }[]) {
-    //Pasamos el jugador para reconocerlo y leerlo del array
-    //guardando a su vez la clase para cambiar sus propiedes
-    //son cambiadas desde el metodo que calculatePosition y lo recoje de un json
-    casillaJugador.forEach(({ player, pos }) => {
-      this.calculatePosition(player, pos)
-        .then(({ bottom, right }) => {
-          let playerClass = '';
-
-          if (player === 'player1') {
-            playerClass = this.players[0] + '-token';
-          }
-          if (player === 'player2') {
-            playerClass = this.players[1] + '-token';
-          }
-          if (player === 'player3') {
-            playerClass = this.players[2] + '-token';
-          }
-          if (player === 'player4') {
-            playerClass = this.players[3] + '-token';
-          }
-
-          const playerTokens = document.querySelectorAll(`.${playerClass}`);
-          playerTokens.forEach((token) => {
-            if (token instanceof HTMLElement) {
-              token.style.bottom = `${bottom}px`;
-              token.style.right = `${right}px`;
-              token.style.color = 'black;';
-            }
-          });
-        })
-        .catch((error) => console.error(error));
-    });
-
-    /* for (let i = 0; i < casillaJugador.length; i++) {
+  /* for (let i = 0; i < casillaJugador.length; i++) {
       if (casillaJugador[i].player === 'player1') {
         const pos = casillaJugador[i].pos;
         const playerClass = casillaJugador[i].player + '-token'; // Clase dinámica
@@ -919,52 +947,4 @@ export class BoardComponent implements OnInit, OnDestroy {
           });
       }
     } */
-  }
-
-  /* Pasar los datos de las coordenadas al numero correspondiente de casilla */
-  calculatePosition(
-    player: string,
-    casilla: number
-  ): Promise<{ bottom: number; right: number }> {
-    return new Promise((resolve, reject) => {
-      this.apiService.getPlayerData().subscribe(
-        (data) => {
-          let position;
-          switch (player) {
-            case 'player1':
-              position = {
-                bottom: data.player1[casilla].bottom,
-                right: data.player1[casilla].right,
-              };
-              break;
-            case 'player2':
-              position = {
-                bottom: data.player2[casilla].bottom,
-                right: data.player2[casilla].right,
-              };
-              break;
-            case 'player3':
-              position = {
-                bottom: data.player3[casilla].bottom,
-                right: data.player3[casilla].right,
-              };
-              break;
-            case 'player4':
-              position = {
-                bottom: data.player4[casilla].bottom,
-                right: data.player4[casilla].right,
-              };
-              break;
-            default:
-              position = { bottom: 0, right: 0 };
-              break;
-          }
-          resolve(position);
-        },
-        (error) => {
-          reject(error);
-        }
-      );
-    });
-  }
 }

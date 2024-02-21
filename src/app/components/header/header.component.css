@@ -142,3 +142,34 @@ h6 {
   background-color: #5a686b;
   width: 2px
 }
+
+.instrucciones {
+  display: none; 
+}
+
+.instrucciones-main{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #172a74, #21a9af);
+  padding: 30px;
+}
+
+
+
+.instrucciones-container {
+  top: 100%;
+  left: 0;
+  width: 60%;
+  background-color: #e8e7e7;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  margin: 15px;
+  border-radius: 5px;
+  border: 1px solid #c1c1c1;
+}
+
+
