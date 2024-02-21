@@ -1,12 +1,37 @@
 <app-header></app-header>
 
 <div class="main">
-    <div class="container-main" id="container-main">
-        @if (showQuestion) {
-        <div class="pregunta">
+  <div class="container-main" id="container-main">
+    <div class="mostrarJugador">
+      @if ( players[0] != null) {
+      <div style="background-color: blue" class="player-tokenMostrar">
+        <div style="margin-left: 95px">{{ players[0] }}</div>
+      </div>
+      } @if ( players[1] != null) {
+      <div style="background-color: green" class="player-tokenMostrar">
+        <div style="margin-left: 95px">{{ players[1] }}</div>
+      </div>
+      } @if ( players[2] != null) {
+      <div style="background-color: red" class="player-tokenMostrar">
+        <div style="margin-left: 95px">{{ players[2] }}</div>
+      </div>
+      } @if ( players[3] != null) {
+      <div style="background-color: yellow" class="player-tokenMostrar">
+        <div style="margin-left: 95px">{{ players[3] }}</div>
+      </div>
+      }
 
-            <div class="pregunta-header">
-                <!--  <div class="pregunta-header-item pregunta-header-uno">
+      <div class="player-tokenMostrar" style="width: 350px">
+        <div style="margin-left: 25px">
+          Turno actual: {{ currentPlayerBase }}
+        </div>
+      </div>
+    </div>
+
+    @if (showQuestion) {
+    <div class="pregunta">
+      <div class="pregunta-header">
+        <!--  <div class="pregunta-header-item pregunta-header-uno">
                     <button type="button" class="btn"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26"
                             fill="currentColor" class="bi bi-check2-circle" viewBox="0 0 16 16">
                             <path
@@ -18,71 +43,105 @@
                         </svg> Send </button>
 
                 </div> -->
-                <div class="pregunta-header-item pregunta-header-dos">{{categoyQuestion}}</div>
-                <!-- <div class="pregunta-header-item pregunta-header-tres">
+        <div class="pregunta-header-item pregunta-header-dos">
+          {{ categoyQuestion }}
+        </div>
+        <!-- <div class="pregunta-header-item pregunta-header-tres">
 
                     <div class="btn tiempo">:)</div>
 
                 </div> -->
-            </div>
+      </div>
 
-            <div class="pregunta-main">
-                <div class="pregunta-content">
-                    <div class="pregunta-content-item">{{question}}</div>
-                </div>
-            </div>
-            <div class="pregunta-footer">
-                <div class="pregunta-footer-item pregunta-footer-uno" [class.selected]="selectedAnswer === answer1" (click)="selectAnswer(answer1)">{{answer1}}</div>
-                <div class="pregunta-footer-item pregunta-footer-dos" [class.selected]="selectedAnswer === answer2" (click)="selectAnswer(answer2)">{{answer2}}</div>
-                <div class="pregunta-footer-item pregunta-footer-tres" [class.selected]="selectedAnswer === answer3" (click)="selectAnswer(answer3)">{{answer3}}</div>
-                <div class="pregunta-footer-item pregunta-footer-cuatro" [class.selected]="selectedAnswer === answer4" (click)="selectAnswer(answer4)">{{answer4}}</div>
-            
-            </div>
-            <div class="pregunta-main">
-
-                <div class="pregunta-header-item pregunta-header-uno">
-                   @if (!showCorrectAnswer) { <button (click)="sendAnswer()" type="button" class="btn"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26"
-                            fill="currentColor" class="bi bi-check2-circle" viewBox="0 0 16 16">
-                            <path
-                                d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0">
-                            </path>
-                            <path
-                                d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z">
-                            </path>
-                        </svg> Send </button>
-                    }
-                    @else{
-                        <h2 class="incorrecta">¡La respuesta es incorrecta!</h2>
-                    }
-                </div>
-            </div>
-
+      <div class="pregunta-main">
+        <div class="pregunta-content">
+          <div class="pregunta-content-item">{{ question }}</div>
         </div>
-        }
-
-        <div class="tablero">
-
-            <div class="columna columna-1">
-                <div class="fila card-1">¿DONDE?</div>
-                 <div class="fila button"> <button (click)="rollExtra()" [disabled]="isButtonDisabledExtra">BURRO SABELOTODO
-                        <div id="diceResultColor"></div>
-                    </button>
-                </div>
-                <div class="fila card-2">¿QUIÉN?</div>
-            </div>
-            <div class="columna columna-2">
-                <div class="container-game" id="board"></div>
-            </div>
-            <div class="columna columna-3">
-                <div class="fila card-3">¿QUE?</div>
-                <div class="fila button"> <button (click)="rollNum()" [disabled]="isButtonDisabled">Lanzar Numero
-                        <div id="diceResult"></div>
-                    </button>
-                </div>
-                <div class="fila card-4">BURRO SABELOTODO</div>
-            </div>
-
+      </div>
+      <div class="pregunta-footer">
+        <div
+          class="pregunta-footer-item pregunta-footer-uno"
+          [class.selected]="selectedAnswer === answer1"
+          (click)="selectAnswer(answer1)"
+        >
+          {{ answer1 }}
         </div>
+        <div
+          class="pregunta-footer-item pregunta-footer-dos"
+          [class.selected]="selectedAnswer === answer2"
+          (click)="selectAnswer(answer2)"
+        >
+          {{ answer2 }}
+        </div>
+        <div
+          class="pregunta-footer-item pregunta-footer-tres"
+          [class.selected]="selectedAnswer === answer3"
+          (click)="selectAnswer(answer3)"
+        >
+          {{ answer3 }}
+        </div>
+        <div
+          class="pregunta-footer-item pregunta-footer-cuatro"
+          [class.selected]="selectedAnswer === answer4"
+          (click)="selectAnswer(answer4)"
+        >
+          {{ answer4 }}
+        </div>
+      </div>
+      <div class="pregunta-main">
+        <div class="pregunta-header-item pregunta-header-uno">
+          @if (!showCorrectAnswer) {
+          <button (click)="sendAnswer()" type="button" class="btn">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="26"
+              height="26"
+              fill="currentColor"
+              class="bi bi-check2-circle"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0"
+              ></path>
+              <path
+                d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"
+              ></path>
+            </svg>
+            Send
+          </button>
+          } @else{
+          <h2 class="incorrecta">¡La respuesta es incorrecta!</h2>
+          }
+        </div>
+      </div>
     </div>
+    }
+
+    <div class="tablero">
+      <div class="columna columna-1">
+        <div class="fila card-1">¿DONDE?</div>
+        <div class="fila button">
+          <button (click)="rollExtra()" [disabled]="isButtonDisabledExtra">
+            BURRO SABELOTODO
+            <div id="diceResultColor"></div>
+          </button>
+        </div>
+        <div class="fila card-2">¿QUIÉN?</div>
+      </div>
+      <div class="columna columna-2">
+        <div class="container-game" id="board"></div>
+      </div>
+      <div class="columna columna-3">
+        <div class="fila card-3">¿QUE?</div>
+        <div class="fila button">
+          <button (click)="rollNum()" [disabled]="isButtonDisabled">
+            Lanzar Numero
+            <div id="diceResult"></div>
+          </button>
+        </div>
+        <div class="fila card-4">BURRO SABELOTODO</div>
+      </div>
+    </div>
+  </div>
 </div>
 <app-footer></app-footer>

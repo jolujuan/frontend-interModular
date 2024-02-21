@@ -25,9 +25,6 @@ export class ShowPopUpServiceService {
         case 'register':
           return '<p>Usuario registrado exitosamente. Por favor inicia sesión.</p>';
           break;
-        case 'profile':
-          return '<p>Inicia sesión para mostrar el perfil.</p>';
-          break;
         case 'expira':
           return '<p> La sesión ha expirado. Por favor, vuelve a iniciar sesión. </p>';
           break;

@@ -6,14 +6,13 @@
             <div class="col-md-12 text-center">
                 <p class="menu">
                     @if (!isLoggedUser) {
-
                     <a [routerLink]="['/home']">Home</a>
                     <a [routerLink]="['/profile']">Profile</a>
                     <a>Team</a>
                     }@else {
                     <a [routerLink]="['/home']">Nueva</a>
                     <a [routerLink]="['/profile']">Profile</a>
-                    <a>Team</a>
+                    <a [routerLink]="['/stats']">Estadisticas</a>
                     }
                 </p>
                 <ul class="ftco-footer-social p-0">

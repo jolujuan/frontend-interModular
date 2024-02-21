@@ -13,7 +13,7 @@ import {
   throwError,
 } from 'rxjs';
 import { User } from '../../interfaces/user';
-import { UserProfile } from '../../interfaces/userProfile';
+import { statsPlayer } from '../../interfaces/statsPlayer';
 
 @Injectable({
   providedIn: 'root',
@@ -28,13 +28,8 @@ export class UsersServiceService {
   };
 
   userSubject = new Subject<User>();
-  userProfile = new Subject<UserProfile>();
 
   logged = new BehaviorSubject<boolean>(false);
-
-  // En UsersServiceService
-  /* favoritesSubject: Subject<{ id: number; uid: string; artwork_id: string }[]> =
-    new Subject(); */
 
   register(
     nombre: string,
@@ -121,72 +116,33 @@ export class UsersServiceService {
     }
     return true;
   }
-  /* async setProfile(formulario: FormGroup) {
-    const formData = formulario.value;
-    console.log('Se guardaran los datos==>');
 
-    // Revisa si el perfil existe
-    const { data: profileData, error: profileError } = await this.supaClient
-      .from('profiles')
-      .select()
-      .eq('uid', formData.id)
-      .single();
+  /* PARA LAS ESTADISTICAS */
+  /* http://localhost:8090/api/v1/getStatsPlayer/joselu */
+  statsPlayerdSubject = new Subject<statsPlayer>();
+  getStatsPlayer(nickname: string, token: string): Observable<any> {
+    return this.http
+      .get<any>(`http://localhost:8090/api/v1/getStatsPlayer/${nickname}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .pipe(
+        tap((response) => {
+          const statusInfo = {
+            acertadas: response.PreguntasAcertadas,
+            falladas: response.PreguntasFalladas,
+            totales: response.PreguntasTotales,
+            stats: response.StatsUser,
+            id: response.ID,
+          };
+          this.statsPlayerdSubject.next(statusInfo);
+        }),
+        catchError((error: HttpErrorResponse) => {
+          console.log(error);
 
-    if (profileError) {
-      //sino existe crear uno
-      console.log('procede a insertarlos por primera vez');
-      // Inserta un nuevo perfil
-      const { data: insertedData, error: insertError } = await this.supaClient
-        .from('profiles')
-        .insert([
-          {
-            uid: formData.id,
-            username: formData.username,
-            full_name: formData.full_name,
-            avatar_url: formData.avatar_url,
-            website: formData.website,
-          },
-        ]);
-    }
-
-    if (profileData) {
-      console.log('procede a actualizar los datos');
-
-      // Actualiza el perfil existente
-      const { data: updatedData, error: updateError } = await this.supaClient
-        .from('profiles')
-        .update({
-          username: formData.username,
-          full_name: formData.full_name,
-          avatar_url: formData.avatar_url,
-          website: formData.website,
+          return throwError(() => new Error('Datos incorrectos'));
         })
-        .eq('uid', formData.id);
-    }
-  } */
-
-  /* getProfile(): void {
-    const uid = localStorage.getItem('uid');
-
-    let profilePromise: Promise<{ data: IUser[] }> = this.supaClient
-      .from('profiles')
-      .select('*')
-      // Filters
-      .eq('uid', uid);
-
-    from(profilePromise)
-      .pipe(tap((data) => console.log(data)))
-      .subscribe(async (profile: { data: IUser[] }) => {
-        console.log('Mostrando datos guardados==>');
-
-        this.userSubject.next(profile.data[0]);
-         const avatarFile = profile.data[0].avatar_url.split('/').at(-1);
-        const { data, error } = await this.supaClient.storage
-          .from('avatars')
-          .download(avatarFile);
-        const url = URL.createObjectURL(data);
-        profile.data[0].avatar_url = url;
-        this.userSubject.next(profile.data[0]); 
-      });
-  }  */
+      );
+  }
 }

@@ -8,21 +8,23 @@
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <!-- <div class="border-start"></div> -->
         @if (!isLoggedUser) {
-          <a [routerLink]="['/home']" class="logo"><img src="https://i.postimg.cc/9X9w0J7P/pic2649768-modified.png" alt=""
-              style="height: 50px;"></a>
-          <div style="width: 20px;"></div>
-          <a class="nav-link" [routerLink]="['/home']" [routerLinkActive]="['active']">Home</a>
+        <a [routerLink]="['/home']" class="logo"><img src="https://i.postimg.cc/9X9w0J7P/pic2649768-modified.png" alt=""
+            style="height: 50px;"></a>
+        <div style="width: 20px;"></div>
+        <a class="nav-link" [routerLink]="['/home']" [routerLinkActive]="['active']">Home</a>
         }@else {
-          <a class="logo"><img src="https://i.postimg.cc/9X9w0J7P/pic2649768-modified.png" alt=""
-              style="height: 50px;"></a>
-          <div style="width: 20px;"></div>
-          <a class="nav-link" [routerLink]="['/home']" [routerLinkActive]="['active']">Nueva</a>
+        <a class="logo"><img src="https://i.postimg.cc/9X9w0J7P/pic2649768-modified.png" alt=""
+            style="height: 50px;"></a>
+        <div style="width: 20px;"></div>
+        <a class="nav-link" [routerLink]="['/home']" [routerLinkActive]="['active']">Nueva</a>
         }
-        <a class="nav-link" [routerLink]="['/profile']" [routerLinkActive]="['active']">Profile</a>
-        <li class="nav-item"><a class="nav-link">Team</a></li>
-        @if (isLoggedUser) {
-        <li class="nav-item"><a class="nav-link">Estadisticas</a></li>
+        <div class="header">
+        </div>
 
+        <li (mouseover)="mostrarInstrucciones()" class="nav-item"><a class="nav-link">Instrucciones</a></li>
+        @if (isLoggedUser) {
+        <li class="nav-item"><a class="nav-link" [routerLink]="['/stats']"
+            [routerLinkActive]="['active']">Estadisticas</a></li>
         }
       </ul>
     </div>
@@ -44,7 +46,6 @@
     }@else{
     <a [routerLink]="['/userManagement/mode']" [queryParams]="{ setmode: 'logout'}"
       class="get-started-btn login">Logout</a>
-    <a [routerLink]="['/profile']" class="get-started-btn">Profile</a>
     }
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -53,3 +54,44 @@
     </button>
   </div>
 </nav>
+
+@if (mostrar) {
+<div (mouseleave)="ocultarInstrucciones()" class="instrucciones-main">
+  <div class="instrucciones-container" [class.active]="mostrar">
+    <p style="text-align: center; font-size: 25px;"><strong>Game Rules</strong></p>
+    <p><strong>Components:</strong></p>
+    <ul>
+      <li>Game Board</li>
+      <li>Question Cards:</li>
+      <li>What am I?</li>
+      <li>Where am I?</li>
+      <li>Who am I?</li>
+      <li>Know-it-All Donkey</li>
+      <li>Maximum 4 Players</li>
+    </ul>
+    <p>&nbsp;</p>
+    <p><strong>Objective of the game:</strong></p>
+    <p>The objective is to be the first player to land on the arrival square located in the hindquarters of the central
+      donkey.</p>
+    <p>&nbsp;</p>
+    <p><strong>Game Rules:</strong></p>
+    <ul>
+      <li>Player 1 rolls the die and moves their token according to the number that comes up.</li>
+      <li>Pass the turn to the next player.</li>
+      <li>Spaces on the board:</li>
+      <li><strong><em><u>KNOW-IT-ALL DONKEY</u></em></strong><strong>:</strong> This is a bonus question. If a player
+        lands on this square after rolling the die, the Reader selects and reads a bonus question from the</li>
+    </ul>
+    <p>KNOW-IT-ALL DONKEY category (red). Only the Player who land on the KNOW-IT-ALL DONKEY square can attempt to
+      answer the question. If the player answers correctly, they roll the movement die and advance again. If the answer
+      is incorrect, then pass the turn to the next player.</p>
+    <ul>
+      <li><strong><em><u>DONKEY'S KICK</u></em></strong><strong>:</strong> If a player lands on a DONKEY'S KICK square,
+        move their pawn three squares back.</li>
+    </ul>
+    <p>&nbsp;</p>
+    <p><strong>Winning the game:</strong></p>
+    <p>The first player to reach the ARRIVAL square in the hindquarters of the donkey is declared the winner.</p>
+  </div>
+</div>
+}
