@@ -86,7 +86,7 @@ _Herramientas utilizadas para crear el proyecto_
 
 * **Jose Luis** - *Frontend* - [jolujuan](https://github.com/jolujuan)
 * **Ismael** - *Backend* - [ismaelBouassami](https://github.com/ismaelBouassami)
-* **Miquel** - *Frontend - Backend* - [MiquelRoca18](https://github.com/MiquelRoca18)
+* **Miquel** - *Desplegament* - [MiquelRoca18](https://github.com/MiquelRoca18)
 
 
 ## Licencia 📄
